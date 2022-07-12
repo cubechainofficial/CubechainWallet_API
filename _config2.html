@@ -1,0 +1,62 @@
+<?
+include "../lib/dbcon.html";
+include "../lib/lib.html";
+include "../lib/walletsv_lib.html";
+
+
+header("Content-Type:text/html;charset=utf-8");
+date_default_timezone_set('UTC');
+
+$time_stamp=time();
+$todate=date("Y-m-d",$time_stamp);
+$datetime=date("Y-m-d H:i:s",$time_stamp);
+$bdtime1=date("Y-m-d H:i:s",$time_stamp-5*60);
+$bdtime=date("Y-m-d H:i:s",$time_stamp-100*60);
+$yesterday=date("Y-m-d",strtotime("-1 day",$time_stamp));
+$nextday=date("Y-m-d",strtotime("+1 day",$time_stamp));
+$ym=date("Y-m",$time_stamp);
+
+$sitepath=dirname(__FILE__);
+$siteurl=str_replace($_SERVER["DOCUMENT_ROOT"],"",$sitepath);
+Define('basePath',$sitepath);
+Define('baseUrl',$siteurl);
+
+
+/*
+$ip=$_SERVER['REMOTE_ADDR'];
+
+$getStr=$_SERVER['QUERY_STRING'];
+if(strpos($getStr,"/")!==false) {
+	$getEx=explode("/",$getStr);
+	$pagef=$getEx[0];
+	$getCount=count($getEx);
+	if(strpos($getEx[$getCount-1],"|")!==false) {
+		$actEx=explode("|",$getEx[$getCount-1]);
+		$action=$actEx[0];
+		$rowid=$actEx[1];
+	}
+} else {
+	if(strpos($getStr,"&")!==false) {
+		$tmp=explode("&",$_SERVER['QUERY_STRING']);
+		$pagef=$tmp[0];
+	} else {
+		$pagef=$_SERVER['QUERY_STRING'];
+		$getEx[0]=$pagef;
+	}
+}
+
+if(!$pagef) {
+	header("HTTP/1.0 404 Not Found");
+	exit;
+}
+
+if(file_exists("./proc/".$pagef.".html")) {
+	include "./proc/".$pagef.".html";
+} else {
+	header("HTTP/1.0 404 Not Found");
+	exit;
+}
+*/
+
+
+?>

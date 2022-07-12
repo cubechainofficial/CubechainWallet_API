@@ -1,0 +1,17 @@
+<?
+include "_config.html";
+
+if(!isset($_GET['wallet']) || empty($_GET['wallet'])) {
+	echo '{"error":1,"msg":"지갑주소를 입력해주세요."}';
+}
+
+$addr=$_GET['wallet'];
+$symbol="QUB";
+
+$balance=check_balance($addr, $symbol);
+
+
+echo $balance;
+
+
+?>

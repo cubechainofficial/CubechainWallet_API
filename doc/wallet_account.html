@@ -1,0 +1,122 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">지갑 확인</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									지갑주소로 계정 아이디를 확인하거나 계정 아이디로 지갑주소를 확인합니다.<br>
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>walletId</td>
+											<td>String</td>
+											<td>조회할 지갑의 아이디</td>
+											<td></td>
+											<td>wallet중 둘중 하나 필수</td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>wallet</td>
+											<td>String</td>
+											<td>조회할 지갑주소</td>
+											<td></td>
+											<td>walletId중 둘중 하나 필수</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>wallet</td>
+											<td>String</td>
+											<td>조회된 지갑 주소</td>
+											<td></td>
+											<td>walletId 입력시</td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>walletId</td>
+											<td>String</td>
+											<td>조회된 계정 아이디</td>
+											<td></td>
+											<td>wallet 입력시</td>
+										</tr>
+
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<? include __DIR__."/_example.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

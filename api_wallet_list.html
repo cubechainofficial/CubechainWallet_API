@@ -1,0 +1,35 @@
+<?
+$resField=array('hashCode','rowid as tokenId','contentNo','type','no','grade','attribute','tradeStatus','optionHash','regtime');
+$field=implode(",",$resField);
+
+if(!$req['params']['walletId']) jsonErrorResult(301);
+if(!is_numeric($req['params']['contentNo'])) jsonErrorResult(302);
+if(!is_numeric($req['params']['type'])) jsonErrorResult(303);
+
+$wallet=dataValue("Member","wallet","id='".$req['params']['walletId']."' and state=1");
+
+if(!$wallet) jsonErrorResult(304);
+
+$res['success']='OK';
+$res['data']=array();
+
+$where="";
+if($req['params']['contentNo']>0) $where.=" and contentNo='".$req['params']['contentNo']."'";
+if($req['params']['type']>0) $where.=" and type='".$req['params']['type']."'";
+
+$sql="select ".$field." from Nft_list where wallet='".$wallet."' and state=1".$where." limit 100";
+$rs=mysqli_query($sock_int,$sql);
+$k=0;
+while($data=mysqli_fetch_assoc($rs)) {
+	//$data['attribute']=json_decode($data['attribute'],true);
+	
+	$data['tradeStatus']=nftSwitchField('tradeStatus',$data['tradeStatus']);
+
+	$res['data'][]=$data;
+	$k++;
+}
+
+if($k==0) jsonErrorResult(305);
+$res['msg']='NFT '.$k.'건이 조회 되었습니다.';
+
+?>

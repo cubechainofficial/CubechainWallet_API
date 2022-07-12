@@ -1,0 +1,103 @@
+<?
+ini_set("display_errors", 0);
+
+Define('FIREWALLMODE','save');
+Define('basePath',$_SERVER["DOCUMENT_ROOT"]."/doc");
+
+date_default_timezone_set('UTC');
+
+$time_stamp=time();
+$todate=date("Y-m-d",$time_stamp);
+$datetime=date("Y-m-d H:i:s",$time_stamp);
+$yesterday=date("Y-m-d",strtotime("-1 day",$time_stamp));
+$ym=date("Y-m",$time_stamp);
+$cno=$time_stamp."_".rand(100000,999999);
+
+
+
+$getStr=$_SERVER['QUERY_STRING'];
+if(strpos($getStr,"/")!==false) {
+	$getEx=explode("/",$getStr);
+	$pagef=$getEx[0];
+	$getCount=count($getEx);
+	if(strpos($getEx[$getCount-1],"|")!==false) {
+		$actEx=explode("|",$getEx[$getCount-1]);
+		$action=$actEx[0];
+		$rowid=$actEx[1];
+	}
+} else {
+	if(strpos($getStr,"&")!==false) {
+		$tmp=explode("&",$_SERVER['QUERY_STRING']);
+		$pagef=$tmp[0];
+	} else {
+		$pagef=$_SERVER['QUERY_STRING'];
+		$getEx[0]=$pagef;
+	}
+}
+
+if(!isset($getEx[1]) || empty($getEx[1])) $getEx[1]=0;
+
+
+$apiUrl2="http://10.10.10.92:8006/api";
+$apiUrl="http://api.cubescan.io/api";
+
+$content['apikey']='';
+$content['intro']='';
+$content['error']='';
+
+$content['coin_transfer']='{"method":"coin_transfer","params":{"fromWallet":"CaiHFqrbMDKas4GeaPv2n2CDCtwdAWsgtf ","toWallet":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","coinAmount":123,"privateKey":"lI7XxQ9cndgc2c9gck0cfdc0xNpK5crch8c0gscDxcxucgHBczcxcd"},"id":1,"jsonrpc":"2.0"}';
+$content['coin_balance']='{"method":"coin_balance","params":{"wallet":"CaiHFqrbMDKas4GeaPv2n2CDCtwdAWsgtf"},"id":1,"jsonrpc":"2.0"}';
+$content['coin_list']='{"method":"coin_list","params":{"fromWallet":"CaiHFqrbMDKas4GeaPv2n2CDCtwdAWsgtf"},"id":1,"jsonrpc":"2.0"}';
+$content['coin_pow']='{"method":"coin_pow","params":{"wallet":"CaiHFqrbMDKas4GeaPv2n2CDCtwdAWsgtf","limit":10},"id":1,"jsonrpc":"2.0"}';
+
+$content['exchange_price']='{"method":"exchange_price","params":[],"id":1,"jsonrpc":"2.0"}';
+
+$content['scan_latest']='{"method":"scan_latest","params":[],"id":1,"jsonrpc":"2.0"}';
+$content['scan_cube']='{"method":"scan_cube","params":[],"id":1,"jsonrpc":"2.0"}';
+$content['scan_transaction']='{"method":"scan_transaction","params":[],"id":1,"jsonrpc":"2.0"}';
+
+$content['token_create']='{"method":"token_create","params":{"fromWallet":"CKSLojf1pphAFbVqBq2WydYCHFCeXdHJNA","tokenName":"QUB","tokenSymbol":"QUB","totalAmount":6000000000,"changeAdmin":true,"privateKey":"1234567890abcdefghijklmnopqrstuvwxyz"},"id":1,"jsonrpc":"2.0"}';
+$content['token_edit']='{"method":"token_edit","params":{"fromWallet":"CKSLojf1pphAFbVqBq2WydYCHFCeXdHJNA","tokenName":"QUB","tokenSymbol":"QUB","totalAmount":6000000000,"description":"QUB Main Token","privateKey":"1234567890abcdefghijklmnopqrstuvwxyz#k"},"id":1,"jsonrpc":"2.0"}';
+$content['token_delete']='{"method":"token_delete","params":{"fromWallet":"CKSLojf1pphAFbVqBq2WydYCHFCeXdHJNA","tokenSymbol":"QUB","privateKey":"1234567890abcdefghijklmnopqrstuvwxyz"},"id":1,"jsonrpc":"2.0"}';
+$content['token_list']='{"method":"token_list","params":{"limit":2},"id":1,"jsonrpc":"2.0"}';
+
+
+
+
+
+$jres['apikey']='';
+$jres['intro']='';
+$jres['error']='';
+
+$jres['coin_pay']='{"jsonrpc":"2.0","result":{"data":{"pay":456,"balance":4560,"txhash":"0xd63792d1abbeb67c460b5701683f4a65426ab457c7e5c1ca9a93bfdf6660001e"},"success":"OK","msg":"코인 지급에 성공했습니다."},"id":1,"error":null}';
+$jres['coin_use']='{"jsonrpc":"2.0","result":{"data":{"use":100,"balance":4593,"txhash":"0xceec23e9b08d7e6e5e9c0ba3a49288e1be90bc06afacbad9ebb119cedf4b6d59"},"success":"OK","msg":"코인을 게임내에서 사용했습니다."},"id":1,"error":null}';
+
+$jres['coin_transfer']='{"jsonrpc":"2.0","result":{"data":{"totalAmount":3000000,"hash":"00e8da57b98f667316bfc5521ee0ad73498c8d11ec6147fac18a3c77a29021f2"},"success":"OK","msg":"코인 이체에 성공했습니다."},"id":1,"error":null}';
+//
+
+$jres['coin_balance']='{"jsonrpc":"2.0","result":{"data":{"balance":23604.0003},"success":"OK","msg":"코인 보유수량 계산에 성공했습니다."},"id":1,"error":null}';
+$jres['coin_list']='{"jsonrpc":"2.0","result":null,"id":"1","error":{"code":610,"message":"[Coin Error] 지갑에서 내역을 찾을 수 없습니다."}}';
+
+$jres['coin_pow']='{"jsonrpc":"2.0","result":{"data":[{"miningAmount":"14.00000000","txHash":"f6e22da484aa06977acdcd361db9207e0f62ab1580d5f5a051b74c15d01fc8cd","cubeNo":"2613011","blockNo":"0","txDate":"2021-12-21 02:37:09"},{"miningAmount":"14.00000000","txHash":"4dac25624b17eefd6f41e72b729dae5a2c9e1979117933d09ebab7084d244dd2","cubeNo":"2612990","blockNo":"0","txDate":"2021-12-21 02:27:32"},{"miningAmount":"14.00000000","txHash":"858eb122c2fd3e9a31b6750132a36b09ff8d683250141ac78f3034e3d49aafee","cubeNo":"2612983","blockNo":"0","txDate":"2021-12-21 02:24:17"},{"miningAmount":"14.00000000","txHash":"2b4993f769a5040b28ef4b9d701b85422d1d6704683ad43bd94f14984dd8b63e","cubeNo":"2612979","blockNo":"0","txDate":"2021-12-21 02:22:29"},{"miningAmount":"14.00000000","txHash":"a23cd78fe4d28a6868caa20774d1faecebc88975b4e8143f9a739eb549cf35dc","cubeNo":"2612770","blockNo":"0","txDate":"2021-12-21 00:48:02"},{"miningAmount":"14.00000000","txHash":"037750d8786920787d2eb899c5591a9f7a8dfbbd6ce7648538ed35d2e43df31f","cubeNo":"2612767","blockNo":"0","txDate":"2021-12-21 00:46:39"},{"miningAmount":"14.00000000","txHash":"6bf608a4f624ab89de62eb64f500c7e7e838172d625e79e38caae18765db6898","cubeNo":"2612625","blockNo":"0","txDate":"2021-12-20 23:41:57"},{"miningAmount":"14.00000000","txHash":"0699168c3335bb60e768b3ab07d566f36ecb40bfeacc02ab31eb826d00be4a2a","cubeNo":"2612567","blockNo":"0","txDate":"2021-12-20 23:15:43"},{"miningAmount":"14.00000000","txHash":"58377644f13a6dd89a3ea8f705ca3eb3de80aede4c93cad0d51fe7db29faaf5b","cubeNo":"2612424","blockNo":"0","txDate":"2021-12-20 22:11:06"},{"miningAmount":"14.00000000","txHash":"fe1210ac51003c9558335ee44f01b5b15bb2f4b4dad7d8493a302377b62a5360","cubeNo":"2612397","blockNo":"0","txDate":"2021-12-20 21:58:42"}],"success":"OK","msg":"코인 채굴내역 10건이 조회 되었습니다."},"id":1,"error":null}';
+
+
+$jres['exchange_price']='{"jsonrpc":"2.0","result":{"data":{"price":8.0e-8},"success":"OK","msg":"거래소 Ticker 호출에 성공했습니다."},"id":1,"error":null}';
+
+$jres['scan_latest']='{"jsonrpc":"2.0","result":{"data":{"cubes":2641954,"amount":27.99999766,"time":"2021-12-30 05:21:21","mined":"CNXerqYcZTFnzFCsNnDGz4uqtJzKP8HUAS","size":240.36,"hashCount":11565141383,"totalIssued":2660573552,"maxTps":7505.14,"walletCount":3045,"txCount":1088698303},"success":"OK","msg":"최근 통계 처리에 성공했습니다."},"id":1,"error":null}';
+$jres['scan_cube']='{"jsonrpc":"2.0","result":{"data":[{"cubes":"2641953","regtime":"2021-12-30 05:20:55","txns":"457","amount":"27.99999766"},{"cubes":"2641952","regtime":"2021-12-30 05:20:28","txns":"457","amount":"27.99999766"},{"cubes":"2641951","regtime":"2021-12-30 05:20:02","txns":"457","amount":"27.99999766"},{"cubes":"2641950","regtime":"2021-12-30 05:19:35","txns":"457","amount":"27.99999766"},{"cubes":"2641949","regtime":"2021-12-30 05:19:06","txns":"457","amount":"27.99999766"},{"cubes":"2641948","regtime":"2021-12-30 05:18:39","txns":"457","amount":"27.99999766"},{"cubes":"2641947","regtime":"2021-12-30 05:18:10","txns":"457","amount":"27.99999766"},{"cubes":"2641946","regtime":"2021-12-30 05:17:43","txns":"457","amount":"27.99999766"},{"cubes":"2641945","regtime":"2021-12-30 05:17:15","txns":"457","amount":"27.99999766"},{"cubes":"2641944","regtime":"2021-12-30 05:16:46","txns":"457","amount":"27.99999766"},{"cubes":"2641943","regtime":"2021-12-30 05:16:20","txns":"457","amount":"27.99999766"},{"cubes":"2641942","regtime":"2021-12-30 05:15:53","txns":"457","amount":"27.99999766"},{"cubes":"2641941","regtime":"2021-12-30 05:15:25","txns":"457","amount":"27.99999766"},{"cubes":"2641940","regtime":"2021-12-30 05:14:58","txns":"457","amount":"27.99999766"},{"cubes":"2641939","regtime":"2021-12-30 05:14:27","txns":"457","amount":"27.99999766"},{"cubes":"2641938","regtime":"2021-12-30 05:14:01","txns":"457","amount":"27.99999766"},{"cubes":"2641937","regtime":"2021-12-30 05:13:34","txns":"457","amount":"27.99999766"},{"cubes":"2641936","regtime":"2021-12-30 05:13:08","txns":"457","amount":"27.99999766"},{"cubes":"2641935","regtime":"2021-12-30 05:12:41","txns":"457","amount":"27.99999766"},{"cubes":"2641934","regtime":"2021-12-30 05:12:15","txns":"457","amount":"27.99999766"}],"success":"OK","msg":"큐브 내역 20건이 조회 되었습니다."},"id":1,"error":null}';
+$jres['scan_transaction']='{"jsonrpc":"2.0","result":{"data":[{"txHash":"3b157a2d6392d147cd98cbf98bb9a4f8989b74311b51d0f21b098560b9b82c10","fromAddr":"CSRLUoXwVyuTyct99rQU3wKkF52u4kFzGg","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-30 01:07:59","amount":"499.81447114"},{"txHash":"3763ee505114114e1451f257812c187bfd410ebdf69f6e58da91281b927bf357","fromAddr":"CPEsZwpX3RpfXrMxLxaixszd6CXN9WHUb8","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-29 02:24:15","amount":"7205.07314698"},{"txHash":"3fa1c325a76a7a240ada36017dc53b7906ec50cd35da94cde55fc2798d733ea5","fromAddr":"Ce68oDHFyfobUKCAEBE54naJwpHUf9FU9S","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-28 14:51:49","amount":"5974.92281425"},{"txHash":"6e484028ddc54fdf488da572599ba18b9e8f4ef9039af490ba05aa9b5ecd039e","fromAddr":"Ce2vdu43Y1Jhds6fWoz2x6gToqdSq7qs3j","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-28 10:55:29","amount":"1442.83831826"},{"txHash":"a1118a292df5c74be659d7e32d2f864fb2a2dbb5fa97371d5349d2bba386255b","fromAddr":"CSbYuMLqVHhCv8pRv2xtZbhUqhUPiyR1xS","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-28 00:35:10","amount":"493.27383887"},{"txHash":"f7bd0c5d4c83a9c8f1e3938b6531b602b286ee356efda5630e4b677c23451fb7","fromAddr":"CLERfSqYT6coFymNvaLQ3nAntnfdwdvyXJ","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-28 00:08:34","amount":"539.52204391"},{"txHash":"3110dedf09a9382d055704bda227815b268396b625ae65a3c1d0a40a8509c458","fromAddr":"CPE2ychTokKJXQkdJdoayCT1xRKxmMkT6t","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 19:09:27","amount":"11364.93171077"},{"txHash":"ff84b76559182b353b9ee1874e181af760f3dfe03640c0516be1f22b048d7e2f","fromAddr":"CRTGXuoWpzADNAnxbu8REQj7HJWYgXxAih","toAddr":"CJJt7JcxfTZFwYzAEmPLPdxNCiJFzsPYji","regtime":"2021-12-27 17:21:28","amount":"104640.62454524"},{"txHash":"d4024be08eb7674bf4c85bb3fe258b0031046552bdcf31bd745dce7a49505f73","fromAddr":"CTk6GmS8FVz74LWXgjTX4buYk7644ZqeGu","toAddr":"CJJt7JcxfTZFwYzAEmPLPdxNCiJFzsPYji","regtime":"2021-12-27 17:15:04","amount":"15596.77180816"},{"txHash":"21f5e8c9f5d72d8da3b4d65c3e3e28f7ca96701661b5512b8226d3b781abf6f6","fromAddr":"CfjDJMHJGu8bE2uyBvRVTSX457YvFBLa4C","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 12:58:23","amount":"662.85996630"},{"txHash":"e0346d15a700949e59eb6681006013f74fb3d4edfc789af5f6f8145f82d01688","fromAddr":"CMtFJvjTLqp5abgo2unKTzZ7u9kBwzyP1V","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 10:23:51","amount":"5450.17691049"},{"txHash":"0e6eb52ef358964ed6c4b93c2072443e700e0c3950c64d93055218d84ed2ac99","fromAddr":"CQX7AyBraYyGaijJcCZS9i5FjKjZThii4g","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 10:03:23","amount":"2493.44512915"},{"txHash":"04356cb08df861aff3d9bffa6d2f883bbdf2382dd4d1428be47a7548ceee3739","fromAddr":"CNLW9TxSQVTeG4BuiGTwgNFoY2xiYC25Ck","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 07:16:17","amount":"4797.46363807"},{"txHash":"9bd8fb3b99dfb347357074ed8e45547add866c9cd5c38ddce3397099b0d1873d","fromAddr":"CdX74khSgxB7bZKAn1ZeLaV1rjcHL8184Z","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 02:07:25","amount":"6977.68891375"},{"txHash":"eadec4c70f5999427ed79fa3d49afda6fdf3d733a45dd92c8eaeb94bc2688180","fromAddr":"CKjBF5UGPWNCSfGNdZ9xKotjksd1mjv5rW","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 01:39:58","amount":"472372.80880555"},{"txHash":"45e7d997c5dcba2c62918c02964fbc8dffc40f9f046aa0714ae9c336ed91db4a","fromAddr":"CNuY7iW6ELLZ8GiwXQv2UwL426y7iEuj2b","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 00:37:50","amount":"35104.36953005"},{"txHash":"571655212fe5ec2e3b70bf5d93274444baf868f85ac17605f5dd88cc2a38622b","fromAddr":"CeqVYRLnjGLyvC3sLjcWMosTUbuJhJF8tg","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-27 00:36:27","amount":"1716.29787914"},{"txHash":"5e60891cb5dea997409986853bee60e6ba5baca012b124e2178ebe314e2d83c6","fromAddr":"CRnTkBW8CGA71tM2Usakwv2XgitEYVmHLt","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-25 01:22:10","amount":"1988.61139136"},{"txHash":"802620ac48eeec6ee8aa0a91bfd47e9a70be42400553ae900a2a96195559e6d0","fromAddr":"CPE2ychTokKJXQkdJdoayCT1xRKxmMkT6t","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-23 19:02:33","amount":"12557.92172635"},{"txHash":"f42642bfd8e7bae2a31d3367411728f9b6d8699cf00b47fef9b78684cf72c5ad","fromAddr":"CRFLVP8REEqrW7qAmPPj1zr255kH213TNw","toAddr":"CPN5B1367kRmoH5TPgfB89KE34Qcfh37tV","regtime":"2021-12-23 17:03:09","amount":"783.89364066"}],"success":"OK","msg":"큐브 내역 20건이 조회 되었습니다."},"id":1,"error":null}';
+
+
+$jres['token_list']='{"jsonrpc":"2.0","result":{"data":[{"fromWallet":"CNjbw9RKyNGLB79fNg2ghee6KZXtGadQGq","tokenName":"QUBT","tokenSymbol":"QUBT","totalAmount":600000000,"tokenDecimal":8,"description":"QUBT-ERC20","officialUrl":"","socialLink":"","iconUrl":"jksIgxbaCvcn.png","setBurn":0,"setLock":2,"setMint":true,"changeAdmin":true,"feeWallet":"CNwn1FHMwGLJmxYuSBwGutYfMXrZJKnsVL","tokenDate":"2022-04-04 04:52:17"},{"fromWallet":"CUQLwVMrsiLwFMCJ5M3czS2KZXxHjcTM1R","tokenName":"Data Token","tokenSymbol":"DTK","totalAmount":1000000000,"tokenDecimal":5,"description":"Most fastest data trans.","officialUrl":"","socialLink":"","iconUrl":"jCmKB0kaOlfJ.png","setBurn":0,"setLock":2,"setMint":true,"changeAdmin":false,"feeWallet":"","tokenDate":"2019-11-04 08:29:44"}],"success":"OK","msg":"토큰 발행내역 2건이 조회 되었습니다."},"id":1,"error":null}';
+$jres['token_create']='{"jsonrpc":"2.0","result":{"data":{"tokenSymbol":"QUB","totalAmount":6000000000},"success":"OK","msg":"토큰 발행에 성공했습니다."},"id":1,"error":null}';
+$jres['token_edit']='{"jsonrpc":"2.0","result":{"data":{"tokenSymbol":"QUB"},"success":"OK","msg":"토큰 수정에 성공했습니다."},"id":1,"error":null}';
+$jres['token_delete']='{"jsonrpc":"2.0","result":{"data":{"tokenSymbol":"QUB"},"success":"OK","msg":"토큰 삭제에 성공했습니다."},"id":1,"error":null}';
+
+
+if(!isset($content[$pagef])) {
+}
+
+$jsondata=$content[$pagef];
+$jsonresult=$jres[$pagef];
+
+?>

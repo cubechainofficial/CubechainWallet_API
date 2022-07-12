@@ -1,0 +1,105 @@
+<?
+
+//addr, fee_addr, name, symbol, amount, set_decimal, description, official, social_link, pic, delete_ok, delete_setting, freeze_ok, freeze_setting, use_date, pow_ok, add_token_ok, auto_ok, fee_ok, fee_amount, admin_ok
+
+if(isset($req['params']['fromWallet']) && !empty($req['params']['fromWallet'])) {
+	$data['addr']=$req['params']['fromWallet'];
+	$data['addr']=trim($data['addr']);
+}
+if(isset($req['params']['feeWallet']) && !empty($req['params']['feeWallet'])) {
+	$data['fee_addr']=$req['params']['feeWallet'];
+	$data['fee_addr']=trim($data['fee_addr']);
+	$data['fee_ok']="yes"; 
+	$data['fee_amount']=0.001;
+} else {
+	$data['fee_ok']="no";
+	$data['fee_amount']=0;
+}
+	
+if(isset($req['params']['tokenName']) && !empty($req['params']['tokenName'])) {
+	$data['name']=$req['params']['tokenName'];
+} else {
+	jsonErrorResult(902);
+}
+if(isset($req['params']['tokenSymbol']) && !empty($req['params']['tokenSymbol'])) {
+	$data['symbol']=$req['params']['tokenSymbol'];
+	$csym=dataValue("token","rowid","symbol='".$data['symbol']."'")+0;
+	if($csym>0) jsonErrorResult(913);
+} else {
+	jsonErrorResult(903);
+}
+
+
+if(isset($req['params']['totalAmount']) && !empty($req['params']['totalAmount'])) {
+	$data['amount']=$req['params']['totalAmount'];
+	if(!is_numeric($data['amount'])) jsonErrorResult(905);
+} else {
+	jsonErrorResult(904);
+}
+if(isset($req['params']['tokenDecimal']) && !empty($req['params']['tokenDecimal'])) {
+	$data['set_decimal']=$req['params']['tokenDecimal'];
+} else {
+	$data['set_decimal']=8;
+}
+if(isset($req['params']['description']) && !empty($req['params']['description'])) {
+	$data['description']=$req['params']['description'];
+} else {
+	$data['description']=$data['name'];
+}
+if(isset($req['params']['officialUrl']) && !empty($req['params']['officialUrl'])) $data['official']=$req['params']['officialUrl'];
+if(isset($req['params']['socialLink']) && !empty($req['params']['socialLink'])) $data['social_link']=$req['params']['socialLink'];
+if(isset($req['params']['iconUrl']) && !empty($req['params']['iconUrl'])) $data['pic']=$req['params']['iconUrl'];
+
+if(isset($req['params']['setBurn']) && !empty($req['params']['setBurn'])) {
+	$data['delete_setting']=$req['params']['setBurn'];
+} else {
+	$data['delete_setting']=0;
+}
+if($data['delete_setting']>0) $data['delete_ok']='yes'; else $data['delete_ok']='no';
+
+if(isset($req['params']['setLock']) && !empty($req['params']['setLock'])) {
+	$data['freeze_setting']=$req['params']['setLock'];
+} else {
+	$data['freeze_setting']=0;
+}
+if($data['freeze_setting']>0) $data['freeze_ok']='yes'; else $data['freeze_ok']='no';
+
+if(isset($req['params']['expireDate']) && !empty($req['params']['expireDate'])) $data['use_date']=$req['params']['expireDate'];
+if(isset($req['params']['setMint']) && !empty($req['params']['setMint'])) {
+	$data['add_token_ok']=$req['params']['setMint'];
+	if($data['add_token_ok']) $data['add_token_ok']="yes"; else $data['add_token_ok']="no";
+}
+if(isset($req['params']['changeAdmin']) && !empty($req['params']['changeAdmin'])) {
+	$data['admin_ok']=$req['params']['changeAdmin'];
+	if($data['admin_ok']) $data['admin_ok']="yes"; else $data['admin_ok']="no";
+}
+
+if(!$data['addr']) jsonErrorResult(906);
+$wrow=dataValue("wallet","rowid","addr='".$data['addr']."' and stat=1")+0;
+if($wrow==0) jsonErrorResult(908);
+
+if(isset($data['fee_addr']) && !empty($data['fee_addr'])) {
+	$wrow=dataValue("wallet","rowid","addr='".$data['fee_addr']."' and stat=1")+0;
+	if($wrow==0) jsonErrorResult(909);
+}
+
+$privateKey=$req['params']['privateKey'];
+if(!$privateKey) jsonErrorResult(911);
+
+$pverify=pkVerify($data['addr'],$privateKey);
+if(!$pverify) jsonErrorResult(912);
+
+// 체크 항목
+$data['stat']=1;
+$data['ip']=$_SERVER['REMOTE_ADDR'];
+$data['joindate']=$datetime;
+$rs=dataInsert("token",$data);
+
+if(!$rs) jsonErrorResult(103);
+
+$res['data']=array();
+$res['data']['tokenSymbol']=$data['symbol'];
+$res['data']['totalAmount']=$data['amount'];
+$res['success']='OK';
+$res['msg']='토큰 발행에 성공했습니다.';
+?>

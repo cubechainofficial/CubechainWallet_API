@@ -1,0 +1,136 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">코인 이체</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									보내는 지갑주소에서 받을 지갑주소로 코인을 이체합니다.<br>
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>fromWallet</td>
+											<td>String</td>
+											<td>보내는 지갑의 아이디</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>privateKey</td>
+											<td>String</td>
+											<td>보내는 지갑의 개인키</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>toWallet</td>
+											<td>String</td>
+											<td>받을 지갑의 아이디</td>
+											<td>*</td>
+											<td>
+												다수의 지갑주소로 보낼때 Array형식<br>
+												"toWallet":["A","B"]
+											</td>
+										</tr>
+										<tr>
+											<th scope="row">4</th>
+											<td>coinAmount</td>
+											<td>Number</td>
+											<td>지급할 코인 수량</td>
+											<td>*</td>
+											<td>
+												다수 지갑에 각각 다른 수량으로 보낼때 Array형식<br>
+												"toWallet":[100,200]
+											</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>totalAmount</td>
+											<td>Number</td>
+											<td>이체 총 수량</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<? include __DIR__."/_example.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

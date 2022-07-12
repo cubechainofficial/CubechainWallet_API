@@ -1,0 +1,226 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">토큰 발행</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									토큰 생성할 정보를 요청하여 토큰을 발행합니다.<br>
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>fromWallet</td>
+											<td>String</td>
+											<td>토큰 생성 주소</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>tokenName</td>
+											<td>String</td>
+											<td>토큰명</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>tokenSymbol</td>
+											<td>String</td>
+											<td>토큰 심볼</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">4</th>
+											<td>totalAmount</td>
+											<td>Number</td>
+											<td>토큰 총 발행량</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">5</th>
+											<td>tokenDecimal</td>
+											<td>Number</td>
+											<td>토큰 소수점 자리수</td>
+											<td></td>
+											<td>Default : 8</td>
+										</tr>
+										<tr>
+											<th scope="row">6</th>
+											<td>description</td>
+											<td>String</td>
+											<td>토큰 소개</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">7</th>
+											<td>officialUrl</td>
+											<td>String</td>
+											<td>발행처 Url</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">8</th>
+											<td>socialLink</td>
+											<td>String</td>
+											<td>발행처 소셜미디어</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">9</th>
+											<td>iconUrl</td>
+											<td>String</td>
+											<td>아이콘 Url</td>
+											<td></td>
+											<td></td>
+										</tr>										
+										<tr>
+											<th scope="row">10</th>
+											<td>setBurn</td>
+											<td>Number</td>
+											<td>소각 기능</td>
+											<td></td>
+											<td>1: 전체소각, 2: 개별소각, 0: 사용안함(Default)</td>
+										</tr>
+										<tr>
+											<th scope="row">11</th>
+											<td>setLock</td>
+											<td>Number</td>
+											<td>락 기능</td>
+											<td></td>
+											<td>1: 전체락, 2: 개별락, 0: 사용안함(Default)</td>
+										</tr>
+										<tr>
+											<th scope="row">12</th>
+											<td>setMint</td>
+											<td>Boolean</td>
+											<td>추가발행 기능 여부</td>
+											<td></td>
+											<td>Default : false</td>
+										</tr>	
+										<tr>
+											<th scope="row">13</th>
+											<td>changeAdmin</td>
+											<td>Boolean</td>
+											<td>변경 및 삭제 기능 여부</td>
+											<td></td>
+											<td>Default : false</td>
+										</tr>
+										<tr>
+											<th scope="row">14</th>
+											<td>feeWallet</td>
+											<td>String</td>
+											<td>수수료 지불 지갑</td>
+											<td></td>
+											<td>설정시 유저는 지불하지 않고 설정된 지갑에서 수수료가 차감됨</td>
+										</tr>
+										<tr>
+											<th scope="row">15</th>
+											<td>privateKey</td>
+											<td>String</td>
+											<td>생성 지갑주소의 개인키</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>tokenSymbol</td>
+											<td>String</td>
+											<td>토큰 심볼</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>totalAmount</td>
+											<td>String</td>
+											<td>발행된 개수</td>
+											<td>*</td>
+											<td></td>
+										</tr>										
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<? include __DIR__."/_example.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

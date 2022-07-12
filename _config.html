@@ -1,0 +1,49 @@
+<?
+ini_set("display_errors", 0);
+
+Define('FIREWALLMODE','save');
+Define('basePath',$_SERVER["DOCUMENT_ROOT"]);
+include basePath."/_dbcon.html";
+include basePath."/_lib.html";
+
+
+header('Content-Type: application/json');
+
+date_default_timezone_set('UTC');
+
+
+$time_stamp=time();
+$todate=date("Y-m-d",$time_stamp);
+$datetime=date("Y-m-d H:i:s",$time_stamp);
+$yesterday=date("Y-m-d",strtotime("-1 day",$time_stamp));
+$ym=date("Y-m",$time_stamp);
+$cno=$time_stamp."_".rand(100000,999999);
+
+
+
+$getStr=$_SERVER['QUERY_STRING'];
+if(strpos($getStr,"/")!==false) {
+	$getEx=explode("/",$getStr);
+	$pagef=$getEx[0];
+	$getCount=count($getEx);
+	if(strpos($getEx[$getCount-1],"|")!==false) {
+		$actEx=explode("|",$getEx[$getCount-1]);
+		$action=$actEx[0];
+		$rowid=$actEx[1];
+	}
+} else {
+	if(strpos($getStr,"&")!==false) {
+		$tmp=explode("&",$_SERVER['QUERY_STRING']);
+		$pagef=$tmp[0];
+	} else {
+		$pagef=$_SERVER['QUERY_STRING'];
+		$getEx[0]=$pagef;
+	}
+}
+
+if(!isset($getEx[1]) || empty($getEx[1])) $getEx[1]=0;
+
+
+include __DIR__."/_setting.html";
+
+?>

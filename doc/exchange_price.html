@@ -1,0 +1,114 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">거래소 시세 전달</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									한빗코 거래소의 API를 호출하여 중계합니다.<br>
+									직접 호출이 가능하다면 첨부된 PHP Code를 이용하여 직접 호출하여 사용하시기 바랍니다.
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>all</td>
+											<td>String</td>
+											<td>모든 데이터 출력</td>
+											<td></td>
+											<td>
+												"yes" : 모든 데이터 출력<br>
+												Default 값 : 현재가만 출력
+											</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>price</td>
+											<td>Number</td>
+											<td>현재가격</td>
+											<td></td>
+											<td>단위 BTC</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<? include __DIR__."/_example.html";?>
+
+
+
+						<? include __DIR__."/example_php_exchange.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

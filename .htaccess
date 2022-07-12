@@ -1,0 +1,6 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond $1 !^((.*)\.html|assets|include|page|proc|work)
+RewriteRule ^(.*)$ index.html?$1 [L]

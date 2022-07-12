@@ -1,0 +1,52 @@
+<?
+//addr, fee_addr, name, symbol, amount, set_decimal, description, official, social_link, pic, delete_ok, delete_setting, freeze_ok, freeze_setting, use_date, pow_ok, add_token_ok, auto_ok, fee_ok, fee_amount, admin_ok
+
+$resField=array('addr as fromWallet','name as tokenName','symbol as tokenSymbol','amount as totalAmount','set_decimal as tokenDecimal','description as description','official as officialUrl','social_link as socialLink','pic as iconUrl','delete_setting as setBurn','freeze_setting as setLock','add_token_ok as setMint','admin_ok as changeAdmin','fee_addr as feeWallet','joindate as tokenDate');
+$field=implode(",",$resField);
+
+$where="";
+if(isset($req['params']['fromWallet']) && !empty($req['params']['fromWallet'])) $where.=" and addr='".$req['params']['fromWallet']."'";
+
+if(isset($req['params']['orderby']) && empty($req['params']['orderby'])) {
+	$where.=" order by joindate ".$req['params']['orderby'];
+} else {
+	$where.=" order by joindate desc";
+}
+
+if(isset($req['params']['limit']) && is_numeric($req['params']['limit'])) {
+	$where.=" limit ".$req['params']['limit'];
+} else {
+	$where.=" limit 100";
+}
+
+if(isset($req['params']['offset']) && is_numeric($req['params']['offset'])) {
+	$where.=" offset ".$req['params']['offset'];
+}
+
+
+$res['data']=array();
+$res['success']='OK';
+
+
+$sql="select ".$field." from token where stat=1".$where;
+$rs=mysqli_query($sock_int,$sql);
+$k=0;
+while($data=mysqli_fetch_assoc($rs)) {
+	if($data['setMint']=="yes") $data['setMint']=true; else $data['setMint']=false;
+	if($data['changeAdmin']=="yes") $data['changeAdmin']=true; else $data['changeAdmin']=false;
+	$data['totalAmount']+=0;
+	$data['tokenDecimal']+=0;
+	$data['setBurn']+=0;
+	$data['setLock']+=0;
+	$res['data'][]=$data;
+	$k++;
+}
+
+//$res['sql']=$sql;
+
+if($k==0) jsonErrorResult(610);
+$res['msg']='토큰 발행내역 '.$k.'건이 조회 되었습니다.'
+
+
+?>
+

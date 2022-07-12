@@ -1,0 +1,88 @@
+<?
+
+
+
+if($_POST['mode']=="exe") {
+
+	include "../_dbcon.html";
+	include "../_lib_mysqli.html";
+
+
+	$data=$_POST;
+	unset($data['mode']);
+
+	if(!$data['company'] || !$data['cname']  || !$data['hp'] || !$data['game'] || !$data['serverip'] || !$data['tokensymbol']) {
+		alertMove('모든 정보를 빠짐없이 기록해 주세요.','');
+		exit;
+	}
+	$chk=dataValue("Site_apikey","rowid","serverip='".$data['serverip']."' and state=1")+0;
+	if($chk>0) {
+		alertMove('해당 IP로 Api 키를 이미 발급받았습니다.','');
+		exit;		
+	}
+
+
+	$data['cno']=$time_stamp."_".rand(10000,90000);
+	$data['apikey']=substr(md5($data['cno']),0,15).substr(md5($data['tokensymbol']),0,10).substr(md5($data['serverip']),0,11);
+	$data['dbname']='chainapi';
+	$data['state']=1;
+	$data['ipcheck']='';
+
+	$rs=dataInsert("Site_apikey",$data);
+
+	if(!$rs) {
+		alertMove('API 키 발급에 실패했습니다.','');
+		exit;		
+	}
+
+}
+
+
+
+
+?>
+
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">API Key 발급 성공</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">API Key :</h4> <h6 class="text-primary"><?=$data['apikey']?></h6>
+								<div class="nk-block-des">
+									<p>API Key는 잘 기록을 해두시기 바랍니다.</p>
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">등록 IP :</h4> <h6 class="text-primary"><?=$data['serverip']?></h6>
+								<div class="nk-block-des">
+									<p>
+									등록된 IP와 API Key는 1:1로 매칭됩니다.<br> 
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

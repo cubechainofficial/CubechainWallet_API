@@ -1,0 +1,141 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">코인 지급</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									회사계정 ID에서 특정 ID로 코인을 지급합니다.<br>
+									여기서 회사계정 ID는 #metacoin 으로 지정하였습니다.
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>walletId</td>
+											<td>String</td>
+											<td>지급할 지갑의 아이디</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>coinAmount</td>
+											<td>Number</td>
+											<td>지급할 코인 수량</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>payType</td>
+											<td>String</td>
+											<td>사용 타입</td>
+											<td></td>
+											<td>
+												Default값 : api<br>
+												예) transfer, charge, swap, item, nft_mint 등
+											</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>pay</td>
+											<td>Number</td>
+											<td>지급한 코인 수량</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>balance</td>
+											<td>Number</td>
+											<td>지급후 코인 보유수량</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>txhash</td>
+											<td>Number</td>
+											<td>이체 전송 해시값</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<? include __DIR__."/_example.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

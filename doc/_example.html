@@ -1,0 +1,33 @@
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">Example : </span></h4>
+							</div>
+						</div>
+
+						<div class="code-block">
+							<h6 class="overline-title title">Json Request</h6>
+							<button class="btn btn-sm clipboard-init" title="Copy from Request" data-clipboard-target="#extable-basic" data-clip-success="Copied" data-clip-text="Copy"><span class="clipboard-text">Copy</span></button>
+							<pre class="prettyprint lang-json" id="extable-basic" style="font-size:14px"><?=$jsondata?></pre>
+						</div>
+
+						<?
+						$curldata='curl -X POST "'.$apiUrl.'" -H "Content-Type: application/json" -H "Api-Key: j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC" --data-raw "[jsondata]"';
+						$jsondata1=str_replace('"','\\"',$jsondata);
+						$curldata=str_replace("[jsondata]",$jsondata1,$curldata);
+						?>
+				
+						<br>
+
+						<div class="code-block">
+							<h6 class="overline-title title">Curl Execute</h6>
+							<button class="btn btn-sm clipboard-init" title="Copy from Request" data-clipboard-target="#extable-curl" data-clip-success="Copied" data-clip-text="Copy"><span class="clipboard-text">Copy</span></button>
+							<pre class="prettyprint lang-json" id="extable-curl" style="font-size:14px"><?=$curldata?></pre>
+						</div>
+
+
+						<br>
+						<div class="code-block">
+							<h6 class="overline-title title">Json Response</h6>
+							<button class="btn btn-sm clipboard-init" title="Copy from Response" data-clipboard-target="#ext-result" data-clip-success="Copied" data-clip-text="Copy"><span class="clipboard-text">Copy</span></button>
+							<pre class="prettyprint lang-json" id="ext-result" style="font-size:14px"><?=$jsonresult?></pre>
+						</div>

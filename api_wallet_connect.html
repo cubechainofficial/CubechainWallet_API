@@ -1,0 +1,16 @@
+<?
+if(!$req['params']['walletId']) jsonErrorResult(201);
+if(!$req['params']['walletPw']) jsonErrorResult(202);
+
+$mem=dataArr0("Member","id='".$req['params']['walletId']."' and state=1");
+$pass=$mem['pass'];
+
+if(!$pass) jsonErrorResult(203);
+if($pass!=md5(md5($req['params']['walletPw']))) jsonErrorResult(204);
+if(!$mem['wallet']) jsonErrorResult(205);
+
+$res['data']=array();
+$res['data']['wallet']=$mem['wallet'];
+$res['success']='OK';
+$res['msg']='지갑연결에 성공했습니다.';
+?>

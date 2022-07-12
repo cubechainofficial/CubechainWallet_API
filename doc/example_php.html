@@ -1,0 +1,74 @@
+<?
+$phpdata='
+function apiCall($url,$header,$content) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+$apikey="j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC";
+$header=array(
+	"Content-type: application/json",
+	"Api-key:".$apikey
+);
+
+$url="http://10.10.10.92:8006/api";
+$content=\'{"method":"coin_balance","params":{"wallet":"CaiHFqrbMDKas4GeaPv2n2CDCtwdAWsgtf"},"id":1,"jsonrpc":"2.0"}\';
+
+$res=apiCall($url,$header,$content);
+$result=json_decode($res,true);
+print_r($result);
+';
+
+?>
+
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">PHP Example</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									API 연동 예제를 보여드립니다.<br>
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">PHP Code : </span></h4>
+							</div>
+						</div>
+
+						<div class="code-block">
+							<h6 class="overline-title title">&nbsp;&nbsp;</h6>
+							<button class="btn btn-sm clipboard-init" title="Copy from Request" data-clipboard-target="#extable-php" data-clip-success="Copied" data-clip-text="Copy"><span class="clipboard-text">Copy</span></button>
+							<pre class="prettyprint lang-php" id="extable-php" style="font-size:14px;min-height:600px"><?=$phpdata?></pre>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+				
+						
+
+
+

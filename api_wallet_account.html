@@ -1,0 +1,18 @@
+<?
+if(!$req['params']['walletId'] && !$req['params']['wallet']) jsonErrorResult(209);
+if($req['params']['walletId'] && $req['params']['wallet']) jsonErrorResult(210);
+
+$res['data']=array();
+
+
+if($req['params']['walletId']) {
+	$res['data']['wallet']=dataValue("Member","wallet","id='".$req['params']['walletId']."'");
+	if(!$res['data']['wallet']) jsonErrorResult(211);
+} else {
+	$res['data']['walletId']=dataValue("Member","id","wallet='".$req['params']['wallet']."'");
+	if(!$res['data']['walletId']) jsonErrorResult(212);
+}
+
+$res['success']='OK';
+$res['msg']='조회에 성공했습니다.';
+?>

@@ -1,0 +1,60 @@
+<?
+$fromAddr=$req['params']['fromWallet'];
+$toAddr=$req['params']['toWallet'];
+
+if(!$fromAddr && !$toAddr) jsonErrorResult(601);
+
+$txdb=dbAddress($fromAddr);
+if($sock_int) mysqli_close($sock_int);
+$sock_int=mysqli_connect($mysql_host,$mysql_user,$mysql_password,$txdb);
+
+$resField=array('addr as fromWallet','u_addr as toWallet','coin as coinAmount','fee as feeAmount','hash as txHash','cubeno as cubeNo','joindate as txDate');
+$field=implode(",",$resField);
+
+$where="";
+if($fromAddr && $toAddr) {
+	$where.=" and addr='".$fromAddr."' and u_addr='".$toAddr."'";
+} else if($fromAddr) {
+	$where.=" and addr='".$fromAddr."'";
+} else if($toAddr) {
+	$where.=" and u_addr='".$toAddr."'";
+}
+
+if(isset($req['params']['orderby']) && empty($req['params']['orderby'])) {
+	$where.=" order by joindate ".$req['params']['orderby'];
+} else {
+	$where.=" order by joindate desc";
+}
+
+if(isset($req['params']['limit']) && is_numeric($req['params']['limit'])) {
+	$where.=" limit ".$req['params']['limit'];
+} else {
+	$where.=" limit 100";
+}
+
+if(isset($req['params']['offset']) && is_numeric($req['params']['offset'])) {
+	$where.=" offset ".$req['params']['offset'];
+}
+
+
+$res['data']=array();
+$res['success']='OK';
+
+
+$sql="select ".$field." from tx where stat=1".$where;
+$rs=mysqli_query($sock_int,$sql);
+$k=0;
+while($data=mysqli_fetch_assoc($rs)) {
+	$res['data'][]=$data;
+	$k++;
+}
+
+
+//$res['sql']=$sql;
+
+if($k==0) jsonErrorResult(610);
+$res['msg']='코인 거래내역 '.$k.'건이 조회 되었습니다.'
+
+
+?>
+

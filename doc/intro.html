@@ -1,0 +1,169 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">API Intro</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">Version</h4>
+								<div class="nk-block-des">
+									<p>1.2.0 (2022-05-11)</p>
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">History</h4>
+								<div class="nk-block-des">
+									<p>
+										1. V1.0.0 (2021-12-21)<br>
+									</p>
+									<p>
+										2. V1.1.0 (2021-12-30)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) 스캔 메뉴 추가 : 최근정보 / 최근큐브 / 최근 거래<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) 거래소 시세 전달 메뉴 추가 
+									</p>
+									<p>
+										3. V1.2.0 (2022-05-11)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;토큰 메뉴 추가 : 토큰 조회 / 토큰 생성 / 토큰 수정 / 토큰 삭제<br>
+									</p>
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">API 방식</h4>
+								<div class="nk-block-des">
+									<p>JSON-RPC 2.0</p>
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">End Point Url</span></h4>
+								<div class="nk-block-des">
+									<p>
+									<?=$apiUrl?><br>
+									<?=$apiUrl2?><br>
+									(내부망에서 작동이 되면 속도면에서 우월합니다.)
+									</p>
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">Headers</span></h4>
+								<div class="nk-block-des">
+									<p>
+										Content-Type : application/json<br>
+										Api-key : j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC
+									</p>
+								</div>
+							</div>
+						</div>
+						<br><br>
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">BODY 구조<span></span></h4>
+								
+								<div class="code-block">
+									<h6 class="overline-title title">data-raw</h6>
+									<pre class="prettyprint lang-json" id="extable-basic" style="font-size:14px">
+{
+	"jsonrpc":"2.0",
+	"method":"",
+	"params":[],
+	"id":1
+}									
+									</pre>
+								</div>								
+							</div>
+						</div>
+						<br><br>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">Response 구조</h4>
+								
+								<div class="code-block">
+									<h6 class="overline-title title">Success</h6>
+									<pre class="prettyprint lang-json" id="extable-basic2" style="font-size:14px">
+{
+	"jsonrpc":"2.0",
+	"result":{
+		"data":[],
+		"success":"OK",
+		"msg":"",
+	},
+	"id":1,
+	"error":null
+}									
+									</pre>
+								</div>	
+								<div class="code-block">
+									<h6 class="overline-title title">Error</h6>
+									<pre class="prettyprint lang-json" id="extable-basic3" style="font-size:14px">
+{
+	"jsonrpc":"2.0",
+	"result":null,
+	"id":1,
+	"error":{
+		"code":506,
+		"message":"[Mining Error] 해당 NFT는 채굴 진행중입니다."
+	}
+}									
+									</pre>
+								</div>	
+							</div>
+						</div>
+
+						<br><br>
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">Curl 실행 구조<span></span></h4>
+								
+								<div class="code-block">
+									<button class="btn btn-sm clipboard-init" title="Copy from Curl" data-clipboard-target="#extable-basic4" data-clip-success="Copied" data-clip-text="Copy"><span class="clipboard-text">Copy</span></button>	
+									<pre class="prettyprint lang-json" id="extable-basic4" style="font-size:14px">
+
+curl -X POST "<?=$apiUrl?>" -H "Content-Type: application/json" -H "Api-Key: j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC" --data-raw "{\"jsonrpc\":\"2.0\",\"method\":\"\",\"params\":[],\"id\":1}"
+
+							
+									</pre>
+								</div>								
+							</div>
+						</div>
+
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

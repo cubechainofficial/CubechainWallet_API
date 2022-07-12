@@ -1,0 +1,34 @@
+<?
+if($sock_int) mysqli_close($sock_int);
+include "_dbcon2.html";
+
+$resField=array('hash as txHash','addr as fromAddr','u_addr as toAddr','node_timestamp as regtime','coin as amount');
+$field=implode(",",$resField);
+
+if(isset($req['params']['limit']) && is_numeric($req['params']['limit'])) {
+	$where.=" limit ".$req['params']['limit'];
+} else {
+	$where.=" limit 20";
+}
+
+
+$res['data']=array();
+$res['success']='OK';
+
+
+$sql="select ".$field." from tx_qub where stat=1 order by node_timestamp desc".$where;
+$rs=mysqli_query($sock_int,$sql);
+$k=0;
+while($data=mysqli_fetch_assoc($rs)) {
+	$data['regtime']=Date("Y-m-d H:i:s",$data['regtime']);
+	$res['data'][]=$data;
+	$k++;
+}
+
+
+//$res['sql']=$sql;
+
+if($k==0) jsonErrorResult(804);
+$res['msg']='큐브 내역 '.$k.'건이 조회 되었습니다.';
+
+?>

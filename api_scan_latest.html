@@ -1,0 +1,39 @@
+<?
+if($sock_int) mysqli_close($sock_int);
+include "_dbcon2.html";
+
+$lastest=dataArr0("tx_mining_cube","1 order by cubeno desc limit 1");
+
+if(!$lastest) jsonErrorResult(801);
+
+$res['data']=array();
+$res['data']['cubes']=$lastest['cubeno'];
+$res['data']['amount']=$lastest['amount'];
+$res['data']['time']=Date("Y-m-d H:i:s",$lastest['node_timestamp']);
+$res['data']['mined']=$lastest['miner'];
+$res['data']['size']=number_format($lastest['size']/1024,2);
+$res['data']['hashCount']=$lastest['hash_count'];
+
+if($lastest['cubeno']>671431) {
+	$issue=182.65*671431+($lastest['cubeno']-671431+1)*70+2400000000;
+} else {
+	$issue=182.65*$lastest['cubeno']+2400000000;
+}
+
+$res['data']['totalIssued']=round($issue);
+
+
+$sql="SELECT MAX(value) as tps,(SELECT SUM(value) from site_tps where type = 'tx') AS cnt,(SELECT value from site_tps where type = 'wallet' order by rowid desc limit 1) AS wallet  from site_tps where type ='tps'";
+$tdata=mysqli_fetch_assoc(mysqli_query($sock_int,$sql));
+
+if(!$tdata) jsonErrorResult(802);
+
+
+$res['data']['maxTps']=$tdata['tps']+0;
+$res['data']['walletCount']=$tdata['wallet']+0;
+$res['data']['txCount']=$tdata['cnt']+0;
+
+
+$res['success']='OK';
+$res['msg']='최근 통계 처리에 성공했습니다.';
+?>

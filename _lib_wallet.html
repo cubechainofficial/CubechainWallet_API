@@ -1,0 +1,120 @@
+<?
+//랜덤문자열 생성
+function genRandString($length){
+	return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+}
+
+//지갑정보 체크 
+function wallet_info($addr) {
+	$wal_info = dataValue("wallet", "count(*)  as cnt", "addr = '".$addr."' and stat != '0'");
+	return ($wal_info > 0) ? true : false;
+}
+
+function db_chk($email) {
+	$info = dataValue("member_db_info", "db_id", "email = '".$email."'");
+	$db_conn = (!empty($info)) ? "tx".$info : "tx1";
+	return $db_conn;
+}
+
+//지갑주소로 DB체크 
+function db_address_chk($addr, $uaddr) {
+	$addr_email = dataValue("wallet", "email", "addr = '".$addr."' and stat != '0'");
+	$uaddr_email = dataValue("wallet", "email", "addr = '".$uaddr."' and stat != '0'");
+	
+	$addr_db = (!empty($addr_email)) ? db_chk($addr_email) : "";
+	$uaddr_db = (!empty($uaddr_email)) ? db_chk($uaddr_email) : "";
+
+	return ["addr_db"=>$addr_db, "u_addr_db"=>$uaddr_db];
+}
+
+function dbEmail($email) {
+	$info = dataValue("member_db_info", "db_id", "email='".$email."'");
+	$db_conn = (!empty($info)) ? "tx".$info : "tx1";
+	return $db_conn;
+}
+ 
+function dbAddress($addr) {
+	$addr_email = dataValue("wallet", "email", "addr='".$addr."' and stat in (1,2)");
+	$addr_db = (!empty($addr_email)) ? dbEmail($addr_email) : "tx1";
+	return $addr_db;
+}
+
+function dbPair($addr,$uaddr) {
+	$addr_db1=dbAddress($addr);
+	$addr_db2=dbAddress($addr);
+	return [$addr_db1,$addr_db2];
+}
+
+
+//지갑 잔액체크 
+function check_balance($addr, $symbol) {
+	$bal_chk = dataValue("wallet_balance", "equity", "addr = '".$addr."' and symbol = '".$symbol."'");
+	$balance = (!empty($bal_chk)) ? $bal_chk : 0;
+	return $balance;
+}
+
+function check_tx_count($addr) {
+	$bal_chk = dataValue("wallet_balance", "equity", "addr = '".$addr."' and symbol = '".$symbol."'");
+	$balance = (!empty($bal_chk)) ? $bal_chk : 0;
+	return $balance;
+}
+
+
+
+function TxMake($addr,$uaddr,$coin,$pkey) {
+	global $datetime,$cubeno,$blockno;
+	$data['tax']="0";
+	$data['fee']="0.0001";
+	$data['txtype']="1";
+	$data['auto_ok']="no";
+	$data['esc_ok']="no";
+	$data['esc_tr']="no";
+	$data['esc_end']="0000-00-00 00:00:00";
+	$data['esc_key']="";
+	$data['alltype']="일반출금";
+	$data['note']="";
+	$data['smsg']="";
+	$data['deposit_msg']="";
+	$data['withdraw_msg']="";
+	$data['cubeno']=$cubeno;
+	$data['blockno']=$blockno;
+	$data['token_key']="";
+	$data['addr_db']=dbAddress($addr);
+	$data['u_addr_db']=dbAddress($uaddr);
+	$data['tps_cnt']=0;
+	$data['ip']=$_SERVER['REMOTE_ADDR'];
+	$data['joindate']=$datetime;
+	if($cubeno>0) $data['stat']=30; else $data['stat']=1;
+
+	$data['addr']=$addr;
+	$data['u_addr']=$uaddr;
+	$data['coin']=$coin;
+	$data['symbol']="QUB";
+	$timestamp=strtotime($data['joindate']);
+	$hash=$data['addr']."|".$data['u_addr']."|".$data['coin']."|".$data['fee']."|".$data['tax']."||".$timestamp."|".$data['token_key']."|".$data['symbol'];
+	//echo $hash."<br><br>";
+	$hash=hash("sha256",$hash);
+	$data['signs']=exec("/home/www/wallet_api/html/tool/cwallet sign ".$pkey." ".$hash);
+
+	//echo $data['signs']."<br><br>";
+	$hash2=$data['addr']."|".$data['u_addr']."|".$data['coin']."|".$data['fee']."|".$data['tax']."|".$data['signs']."|".$timestamp."|".$data['token_key']."|".$data['symbol'];
+	$data['hash']=hash("sha256",$hash2);
+
+	$rs=dataInsert("tx_pool",$data);
+	if($rs) {
+		return $data['hash'];
+	} else {
+		return "";
+	}
+}
+
+function pkVerify($addr,$pkey) {
+	$hash=md5("cubewallet_api");
+	$sign=exec("/home/www/wallet_api/html/tool/cwallet sign ".$pkey." ".$hash);
+	if(!$sign) return false;
+	$cw=exec("/home/www/wallet_api/html/tool/cwallet signVerify ".$addr." ".$sign." ".$hash);
+	//echo $cw."<br>";
+	if($cw!="true") return false;
+	return true;
+}
+?>

@@ -1,0 +1,33 @@
+<?
+$cw=exec(basePath."cwallet create");
+$cwallet=json_decode($cw,true);
+
+if(!$cwallet['address']) jsonErrorResult(206);
+
+$res['data']=array();
+$res['data']['privateKey']=$cwallet['privatekey'];
+$res['data']['restoreWord']=$cwallet['restoreword'];
+$res['data']['wallet']=$cwallet['address'];
+
+
+if($req['params']['walletPw']) {
+	if(!$req['params']['walletId']) jsonErrorResult(201);
+
+	$chk=dataValue("Member","rowid","id='".$req['params']['walletId']."'")+0;
+	if($chk>0) jsonErrorResult(207);
+	
+	$res['data']['account']='create';
+	$data['id']=$req['params']['walletId'];
+	$data['pass']=md5(md5($req['params']['walletPw']));
+	$data['wallet']=$res['data']['wallet'];
+	$data['active']=1;
+	$data['state']=1;
+	$data['ipcheck']='';
+	$rs=dataInsert("Member",$data);
+
+	if(!$rs) jsonErrorResult(208);
+}
+
+$res['success']='OK';
+$res['msg']='지갑생성에 성공했습니다.';
+?>

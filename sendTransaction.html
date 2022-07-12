@@ -1,0 +1,35 @@
+<?
+include "_config.html";
+
+
+/*
+$give=array(
+	'CemMXd3czda2UrjcB44jki7t4GWGMVAir4'=>1000000,
+	'CX1kjCmZtRbVrhmjiNQevSgrBho1mrHzoa'=>1000000,
+	'CHzUgJwnbDaA76A5jTgjeWko9cMHGTmnJb'=>500000,
+	'CVozJ7sfv4wuJXvGPocxYCnbKuLeDUrB8w'=>500000,
+	'CGxpWfFDuH5wanDEaLs6edAgkNQTmu3GHB'=>500000,
+	'CKqQnCq9axPpLa6RJTsFakB5i9CcLH15Xy'=>250000,
+);
+*/
+
+
+
+$addr="CNqz8Re3kmRGpiLpjK67cXurEJ8ctLjn1W";
+$pkey="#g";
+$cubeno=0;
+$blockno=0;
+$sum=0;
+
+if(!$pkey) exit;
+foreach($give as $uaddr=>$coin) {
+	if($blockno>24) $blockno=1;
+	$tdata=TxMake($addr,$uaddr,$coin,$pkey);
+	$sum+=$coin;
+}
+
+
+
+
+
+?>

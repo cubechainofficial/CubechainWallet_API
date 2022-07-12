@@ -1,0 +1,43 @@
+<?if(false) {?>
+<span class="btn btn-danger btn-sm" id="exeBtn">실행</span>
+
+<script>
+	$(document).ready(function() {
+		$('#exeBtn').on('click',function(){
+			$.ajax({
+				type: 'post',
+				url: '/api',
+		        headers: {'Content-Type': 'application/json','Api-key': 'j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC'},
+				data: JSON.stringify(<?=$jsondata?>),
+				dataType: "json",
+				success: function(data)	{
+					$('#ext-result').html(JSON.stringify(data));	
+					console.log(data);
+				}
+			});	
+		});
+	});
+</script>				
+<?}?>
+				<br><br><br>
+
+				<div class="nk-footer">
+                    <div class="container-fluid">
+                        <div class="nk-footer-wrap">
+                            <div class="nk-footer-copyright">
+                            </div>
+                            <div class="nk-footer-links">
+								 &copy; 2019 <a href="https://www.cubechainwallet.io" target="_blank">CubeWallet</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<script src="./assets/js/bundle.js?ver=2.0.0"></script>
+    <script src="./assets/js/scripts.js?ver=2.0.0"></script>
+</body>
+
+</html>

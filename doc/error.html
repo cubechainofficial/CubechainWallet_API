@@ -1,0 +1,64 @@
+<?
+include "../_setting.html";
+?>
+
+
+<div class="nk-content">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">Error Code</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									에러 코드와 에러 메시지를 확인합니다..<br>
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="nk-block nk-block-lg">
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">코드</th>
+											<th scope="col" class="text-left">메시지</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?foreach($msg as $code=>$message) {?>
+										<tr>
+											<th scope="row"><?=$code?></th>
+											<td class="text-left"><?=$message?></td>
+										</tr>
+										<?}?>
+										<tr>
+											<th scope="row">2000</th>
+											<td class="text-left">
+											[Json Error]<br>
+											No error has occurred<br>
+											The maximum stack depth has been exceeded<br>
+											Control character error, possibly incorrectly encoded<br>
+											Syntax error<br>
+											Malformed UTF-8 characters, possibly incorrectly encoded<br>
+											Unkown json error
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

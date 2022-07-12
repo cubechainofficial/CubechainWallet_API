@@ -1,0 +1,1518 @@
+<?
+function qrcode1($url=null) {
+    if(is_null($url)) return null;
+    $url = rawurlencode($url);
+    $datas = array(
+        "cht" => "qr",
+        "chs" => "150x150",
+        "choe" => "Shift_JIS",
+        "chl" => $url
+    );
+    $qrcode=createUri($datas);
+    return $qrcode;
+}
+
+function qrcode($url=null) {
+    if(is_null($url)) return null;
+    $url = rawurlencode($url);
+    $datas = array(
+        "cht" => "qr",
+        "chs" => "100x100",
+        "choe" => "Shift_JIS",
+        "chl" => $url
+    );
+    $qrcode=createUri($datas);
+    return $qrcode;
+}
+
+function createUri($datas) {
+    $uri = 'http://chart.apis.google.com/chart?';
+    $query = "";
+    foreach($datas as $key => $val){
+        if( strcmp($query, "") != 0 ){
+            $query .= "&";
+        }
+        $query .= "$key=$val";
+    }
+    $uri .= $query;
+    return $uri;
+}
+
+
+
+// 지갑 ID
+// 해쉬10분 : 암호값 md5.md5
+
+class DECENCRYPT {
+    var $salt;
+    var $lenght;
+ 
+    function __construct($salt) {
+        $this->salt = md5($salt);
+        $this->length = strlen($this->salt);
+    }
+ 
+    function encrypt($str) {
+        $length = strlen($str);
+        $result = '';
+ 
+        for($i=0; $i<$length; $i++) {
+            $char    = substr($str, $i, 1);
+            $keychar = substr($this->salt, ($i % $this->length) - 1, 1);
+            $char    = chr(ord($char) + ord($keychar));
+            $result .= $char;
+        }
+ 
+        return base64_encode($result);
+    }
+ 
+    function decrypt($str) {
+        $result = '';
+        $str    = base64_decode($str);
+        $length = strlen($str);
+ 
+        for($i=0; $i<$length; $i++) {
+            $char    = substr($str, $i, 1);
+            $keychar = substr($this->salt, ($i % $this->length) - 1, 1);
+            $char    = chr(ord($char) - ord($keychar));
+            $result .= $char;
+        }
+        return $result;
+    }
+}
+
+
+
+function hEncode3($str) {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','A','B','C','D',
+		'E','F','G','H','I','J','K','L','M','N',
+		'O','P','Q','R','S','T','U','V','W','X',
+		'Y','Z','0','1','2','3','4','5','6','7',
+		'8','9'
+	);
+	$hashArr=array(
+		'L','c','M','N','k','b','C','f','U','V',
+		'l','5','A','q','J','T','K','i','u','4',
+		'B','a','w','x','E','F','6','S','9','G',
+		'H','m','n','P','Q','v','j','R','y','h',
+		'z','Z','0','1','D','o','p','2','3','W',
+		'd','e','X','r','8','I','7','s','t','g',
+		'Y','O'
+	);
+	//$str=strtolower($str);
+	$strlen=strlen($str);
+	$rkey=rand(0,61);
+	$hash['key']=$keyArr[$strlen];
+	$hash['rkey']=$keyArr[$rkey];
+
+	for($j=0;$j<20;$j++) {
+		for($i=0;$i<$strlen;$i++) {
+			$strKey1=array_keys($keyArr,substr($str,$i,1));
+			$hashKey[$i]=$strKey1[0]+$i;
+		}
+		foreach($hashKey as $key=>$val) {
+			$hkey=($val+$j+$rkey)%62;
+			$hstr.=$hashArr[$hkey];
+		}
+	}
+	$result=$hash['rkey'].substr($hstr,0,52).$hash['key'];
+	return $result;
+}
+
+
+function hDecode3($str,$debug="") {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','A','B','C','D',
+		'E','F','G','H','I','J','K','L','M','N',
+		'O','P','Q','R','S','T','U','V','W','X',
+		'Y','Z','0','1','2','3','4','5','6','7',
+		'8','9'
+	);
+	$hashArr=array(
+		'L','c','M','N','k','b','C','f','U','V',
+		'l','5','A','q','J','T','K','i','u','4',
+		'B','a','w','x','E','F','6','S','9','G',
+		'H','m','n','P','Q','v','j','R','y','h',
+		'z','Z','0','1','D','o','p','2','3','W',
+		'd','e','X','r','8','I','7','s','t','g',
+		'Y','O'
+	);
+	$hash['rkey']=substr($str,0,1);
+	$hash['key']=substr($str,-1);
+	$hash['str']=substr($str,1,strlen($str)-2);
+	$tmp=array_keys($keyArr,$hash['rkey']);
+	$hash['rkey']=$tmp[0];
+	$tmp=array_keys($keyArr,$hash['key']);
+	$hash['length']=$tmp[0];
+	$hash['str1']=substr($str,1,$hash['length']);
+	$hash['str2']=substr($str,$hash['length']+1,$hash['length']);
+
+	if($debug=="y") {
+		echo "rkey=".$hash['rkey']."<br>";
+		echo "length=".$hash['length']."<br>";
+		echo "str=".$hash['str']."<br>";
+		echo "str1=".$hash['str1']."<br>";
+		echo "str2=".$hash['str2']."<br>";
+	}
+
+	for($i=0;$i<$hash['length'];$i++) {
+		$strKey=array_keys($hashArr,substr($hash['str1'],$i,1));
+		$hashKey=$strKey[0];
+		$hkey=$hashKey-$hash['rkey']-$i-0;
+		if($hkey<0) $hkey+=62;
+		if($hkey<0) $hkey+=62;
+		if($hkey>61) $hkey-=62;
+		$hash['estr1'].=$keyArr[$hkey];
+	}
+	for($i=0;$i<$hash['length'];$i++) {
+		$strKey=array_keys($hashArr,substr($hash['str2'],$i,1));
+		$hashKey=$strKey[0];
+		$hkey=$hashKey-$hash['rkey']-$i-1;
+		if($hkey<0) $hkey+=62;
+		if($hkey<0) $hkey+=62;
+		if($hkey>61) $hkey-=62;
+		$hash['estr2'].=$keyArr[$hkey];
+	}
+	
+	if($hash['estr1']==$hash['estr2']) {
+		$result=$hash['estr1'];		
+	} else {
+		if(strlen($hash['estr1'])>30) $result=$hash['estr1']; else $result="";
+	}
+	return $result;
+}
+
+function prvkey() {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','A','B','C','D',
+		'E','F','G','H','I','J','K','L','M','N',
+		'O','P','Q','R','S','T','U','V','W','X',
+		'Y','Z','0','1','2','3','4','5','6','7',
+		'8','9'
+	);	
+	$key='';
+	for($i=1;$i<53;$i++) {
+		$p=rand(0,62);
+		$key.=$keyArr[$p];
+	}
+	return $key;
+}
+
+function walletAddress($id,$pass) {
+	global $datetime;
+	$pkey=prvkey();
+	$addr=hEncode3($pkey);
+	$daddr=hDecode3($addr);
+	if($pkey!=$daddr) {
+		return false;
+	}
+	$data['address']="P".substr($addr,0,33);
+	$chk=$pkey;
+	while($pkey==$chk) {
+		$chk=dataValue("Wallet_address_rc","pkey","address='".$data['address']."'");
+	}
+	
+	$data['id']=$id;
+	$data['pass']=md5(md5($pass));
+	$data['pkey']=$pkey;
+	$data['hashv']=md5(md5($data['address']));
+	$data['ipcheck']='';
+	$data['regtime']=$datetime;
+	$data['state']=1;
+	$rs=dataInsert("Wallet_address_rc",$data);
+	if($rs) {
+		return $addr;
+	} else {
+		return false;
+	}
+}
+
+function transferSCash($id,$loginid,$scash) {
+	$time_stamp=time();
+	$todate=date("Y-m-d",$time_stamp);
+	$data['ipcheck']="";
+	$data['state']=0;
+	$data['id']=$loginid;
+	$data['cno']=$time_stamp;
+	$data['paydata']=$id;
+	$data['gtype']="exchange";
+	$data['inputid']="From exchange";
+	$data['paydate']=$todate;
+
+	$data['ctype']='sp';
+	$data['cash']=$scash;
+	$rs=dataInsert2("Cash",$data); 
+	return $rs;
+}
+
+function transferMCash($id,$loginid,$mcash) {
+	$time_stamp=time();
+	$todate=date("Y-m-d",$time_stamp);
+	$data['ipcheck']="";
+	$data['state']=0;
+	$data['id']=$loginid;
+	$data['cno']=$time_stamp;
+	$data['paydata']=$id;
+	$data['gtype']="exchange";
+	$data['inputid']="From exchange";
+	$data['paydate']=$todate;
+
+	$data['ctype']='mp';
+	$data['cash']=$mcash;
+	$rs=dataInsert2("Cash",$data); 
+	return $rs;
+}
+
+
+function ipRand() {
+	$rand1=rand(10,255);
+	$rand2=rand(10,255);
+	$rand3=rand(10,255);
+	$rand4=rand(10,255);
+	$ip=$rand1.".".$rand2.".".$rand3.".".$rand4;
+	return $ip;
+}
+
+function hash10($time) {
+	if(is_numeric($time)) $timestamp=$time; else $timestamp=strtotime($time);
+	$times=floor($timestamp/(60*10))*(60*10);
+	$datetime=Date("Y-m-d H:i:s",$times);
+	$result=md5($times).md5($datetime);
+	//echo $timestamp." ".$times." ".$datetime." ".$result;
+	return $result;
+}
+
+function hashid($id,$inid,$cash,$time="") {
+	if($time=="") $time=time();
+	$result=md5($id.$cash.$time).md5($inid.$cash.$time);
+	return $result;
+}
+
+
+function blocksize($time="") {
+	if($time=="") $time=time();
+	$rand=rand(99,299);
+	$timez=substr($time,-2);
+	$bsize=$rand+$timez;
+	return $bsize;
+}
+
+
+
+function numformatDel($num,$dc=2) {
+	$pow=pow(10,$dc);
+	$num=floor($num*$pow)/$pow;
+	$result=number_format($num,$dc);
+	return $result;
+}
+
+
+function hEncode2($str) {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','A','B','C','D',
+		'E','F','G','H','I','J','K','L','M','N',
+		'O','P','Q','R','S','T','U','V','W','X',
+		'Y','Z','0','1','2','3','4','5','6','7',
+		'8','9','_','!','@','#','~','[',']','+',
+		'-','=','|','\\','/','^','&','*','(',')',
+		'{','}','.',','
+	);
+	$hashArr=array(
+		'L','c','M','N','@','k','#','b','C','f',
+		'U','V','l','5','A','q','J',')','&','T',
+		'K','i','u','4','-','B','a','=','w','x',
+		'E','F','6','S',',','G','H',']','+','}',
+		'm','n','P','Q','v','j','R','y','9','h',
+		'z','Z','0','1','D','o','p','2','3','\\',
+		'_','!','W','d','e','X','~','r','8','^',
+		'|','I','/','*','(','7','[','.','s','t',
+		'{','g','Y','O'
+	);
+	//$str=strtolower($str);
+	$strlen=strlen($str);
+	$rkey=rand(0,60);
+	$hash['key']=$keyArr[$strlen];
+	$hash['rkey']=$keyArr[$rkey];
+
+	for($j=0;$j<20;$j++) {
+		for($i=0;$i<$strlen;$i++) {
+			$strKey1=array_keys($keyArr,substr($str,$i,1));
+			$hashKey[$i]=$strKey1[0]+$i;
+		}
+		foreach($hashKey as $key=>$val) {
+			$hkey=($val+$j+$rkey)%84;
+			$hstr.=$hashArr[$hkey];
+		}
+	}
+	$result=$hash['rkey'].substr($hstr,0,58).$hash['key'];
+	return $result;
+}
+
+
+function hDecode2($str,$debug="") {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','A','B','C','D',
+		'E','F','G','H','I','J','K','L','M','N',
+		'O','P','Q','R','S','T','U','V','W','X',
+		'Y','Z','0','1','2','3','4','5','6','7',
+		'8','9','_','!','@','#','~','[',']','+',
+		'-','=','|','\\','/','^','&','*','(',')',
+		'{','}','.',','
+	);
+	$hashArr=array(
+		'L','c','M','N','@','k','#','b','C','f',
+		'U','V','l','5','A','q','J',')','&','T',
+		'K','i','u','4','-','B','a','=','w','x',
+		'E','F','6','S',',','G','H',']','+','}',
+		'm','n','P','Q','v','j','R','y','9','h',
+		'z','Z','0','1','D','o','p','2','3','\\',
+		'_','!','W','d','e','X','~','r','8','^',
+		'|','I','/','*','(','7','[','.','s','t',
+		'{','g','Y','O'
+	);
+	$hash['rkey']=substr($str,0,1);
+	$hash['key']=substr($str,-1);
+	$hash['str']=substr($str,1,strlen($str)-2);
+	$tmp=array_keys($keyArr,$hash['rkey']);
+	$hash['rkey']=$tmp[0];
+	$tmp=array_keys($keyArr,$hash['key']);
+	$hash['length']=$tmp[0];
+	$hash['str1']=substr($str,1,$hash['length']);
+	$hash['str2']=substr($str,$hash['length']+1,$hash['length']);
+
+	if($debug=="y") {
+		echo "rkey=".$hash['rkey']."<br>";
+		echo "length=".$hash['length']."<br>";
+		echo "str=".$hash['str']."<br>";
+		echo "str1=".$hash['str1']."<br>";
+		echo "str2=".$hash['str2']."<br>";
+	}
+
+	for($i=0;$i<$hash['length'];$i++) {
+		$strKey=array_keys($hashArr,substr($hash['str1'],$i,1));
+		$hashKey=$strKey[0];
+		$hkey=$hashKey-$hash['rkey']-$i-0;
+		if($hkey<0) $hkey+=58;
+		if($hkey<0) $hkey+=58;
+		if($hkey>57) $hkey-=58;
+		$hash['estr1'].=$keyArr[$hkey];
+	}
+	for($i=0;$i<$hash['length'];$i++) {
+		$strKey=array_keys($hashArr,substr($hash['str2'],$i,1));
+		$hashKey=$strKey[0];
+		$hkey=$hashKey-$hash['rkey']-$i-1;
+		if($hkey<0) $hkey+=58;
+		if($hkey<0) $hkey+=58;
+		if($hkey>57) $hkey-=58;
+		$hash['estr2'].=$keyArr[$hkey];
+	}
+	
+	if($hash['estr1']==$hash['estr2']) {
+		$result=$hash['estr1'];		
+	} else {
+		if(strlen($hash['estr1'])>30) $result=$hash['estr1']; else $result="";
+	}
+	return $result;
+}
+
+function hEncode($str) {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','0','1','2','3',
+		'4','5','6','7','8','9','_','!','@','#',
+		'~','[',']','+','-','=','|','\\','/','^',
+		'&','*','(',')','{','}','.',','
+	);
+	$hashArr=array(
+		'3','a','r','Q','6','Y','X','2','9','S',
+		'4','w','5','b','F','g','H','i','J','P',
+		'M','j','A','x','N','U','y','R','0','D',
+		'o','t','v','8','s','K','L','z','1','7',
+		'G','q','I','l','d','B','W','c','f','n',
+		'Z','u','p','h','k','C','E','O'
+	);
+	$str=strtolower($str);
+	$strlen=strlen($str);
+	$rkey=rand(0,35);
+	$hash['key']=$keyArr[$strlen];
+	$hash['rkey']=$keyArr[$rkey];
+
+	for($j=0;$j<20;$j++) {
+		for($i=0;$i<$strlen;$i++) {
+			$strKey1=array_keys($keyArr,substr($str,$i,1));
+			$hashKey[$i]=$strKey1[0]+$i;
+		}
+		foreach($hashKey as $key=>$val) {
+			$hkey=($val+$j+$rkey)%58;
+			$hstr.=$hashArr[$hkey];
+		}
+	}
+	if(strlen($hstr)<=60) $hstr.=$hstr;
+	if(strlen($hstr)<=60) $hstr.=$hstr;
+	$result=$hash['rkey'].substr($hstr,0,58).$hash['key'];
+	return $result;
+}
+
+
+function hDecode($str,$debug="") {
+	$keyArr=array(
+		'a','b','c','d','e','f','g','h','i','j',
+		'k','l','m','n','o','p','q','r','s','t',
+		'u','v','w','x','y','z','0','1','2','3',
+		'4','5','6','7','8','9','_','!','@','#',
+		'~','[',']','+','-','=','|','\\','/','^',
+		'&','*','(',')','{','}','.',','
+	);
+	$hashArr=array(
+		'3','a','r','Q','6','Y','X','2','9','S',
+		'4','w','5','b','F','g','H','i','J','P',
+		'M','j','A','x','N','U','y','R','0','D',
+		'o','t','v','8','s','K','L','z','1','7',
+		'G','q','I','l','d','B','W','c','f','n',
+		'Z','u','p','h','k','C','E','O'
+	);
+	$hash['rkey']=substr($str,0,1);
+	$hash['key']=substr($str,-1);
+	$hash['str']=substr($str,1,strlen($str)-2);
+	$tmp=array_keys($keyArr,$hash['rkey']);
+	$hash['rkey']=$tmp[0];
+	$tmp=array_keys($keyArr,$hash['key']);
+	$hash['length']=$tmp[0];
+	$hash['str1']=substr($str,1,$hash['length']);
+	$hash['str2']=substr($str,$hash['length']+1,$hash['length']);
+	$hash['estr1']="";
+	$hash['estr2']="";
+
+	if($debug=="y") {
+		echo "rkey=".$hash['rkey']."<br>";
+		echo "length=".$hash['length']."<br>";
+		echo "str=".$hash['str']."<br>";
+		echo "str1=".$hash['str1']."<br>";
+		echo "str2=".$hash['str2']."<br>";
+	}
+
+	for($i=0;$i<$hash['length'];$i++) {
+		$strKey=array_keys($hashArr,substr($hash['str1'],$i,1));
+		$hashKey=$strKey[0];
+		$hkey=$hashKey-$hash['rkey']-$i-0;
+		if($hkey<0) $hkey+=58;
+		if($hkey<0) $hkey+=58;
+		if($hkey>57) $hkey-=58;
+		$hash['estr1'].=$keyArr[$hkey];
+	}
+	for($i=0;$i<$hash['length'];$i++) {
+		$strKey=array_keys($hashArr,substr($hash['str2'],$i,1));
+		$hashKey=$strKey[0];
+		$hkey=$hashKey-$hash['rkey']-$i-1;
+		if($hkey<0) $hkey+=58;
+		if($hkey<0) $hkey+=58;
+		if($hkey>57) $hkey-=58;
+		$hash['estr2'].=$keyArr[$hkey];
+	}
+	
+	if($hash['estr1']==$hash['estr2']) {
+		$result=$hash['estr1'];		
+	} else {
+		if(strlen($hash['estr1'])>30) $result=$hash['estr1']; else $result="";
+	}
+	return $result;
+}
+
+
+function walletId00($id) {
+	$result=hEncode($id);
+	return $result;
+}
+
+function walletId($id) {
+	$con=true;
+	while($con) {
+		$result=hEncode($id);
+		$wid=dataValue("Wallet","id","id='".$result."' limit 1");
+		if(!$wid) $con=false;
+	}
+	return $result;
+}
+
+function fireWall() {
+	global $todate;
+	$result="";
+	if($_POST || $_GET) {
+		$chkCount=dataValue("Site_firewall","count(*) as cnt","ipcheck='".$_SERVER['REMOTE_ADDR']."' and  and state=1 and regtime>'".$todate." 00:00:00'");
+		if($chkCount>10) {
+			alert('This IP is block.');
+			header("HTTP/1.0 404 Not Found");
+			exit;
+			$result=false;
+		} else {
+			$result=filterData();
+		}
+	}
+	foreach($_POST as $k=>$v) {
+		if($k=="pass" || $k=="pass1" || $k=="pass2" || $k=="pass3" || $k=="wpass" || $k=="pass_confirm" || $k=="pass2_confirm" || $k=="wpass_confirm") continue;
+		$_POST[$k]=sqlFilter2($v);
+	}
+	return $result;
+}
+
+function sqlFilter($str) {
+    $str=htmlentities(strip_tags($str));
+    if(get_magic_quotes_gpc()) $str=stripslashes($str);
+    $str=mysqli_real_escape_string($str);
+    $str=trim($str);
+	$filter=array('union ','delete(','update(','insert(','select(','select*','select ','delete ','insert ','update ','drop ',' or ','sleep(','if(','now(',';');
+
+	foreach($filter as $k=>$v) {
+		if(strpos($str,$v)!==false) { 
+			$str=str_replace($v,"__SF_".$k,$str);
+			break;
+		}
+	}
+    return $str;
+}
+
+function sqlFilter2($str) {
+    $str=htmlentities(strip_tags($str));
+    if(get_magic_quotes_gpc()) $str=stripslashes($str);
+    $str=mysqli_real_escape_string($str);
+    $str=trim($str);
+	return $str;
+}
+
+function filterData() {
+	//sql injection
+	//( ‘ “ ) # || + > ; : space /) 및 SQL 명령(UNION, SELECT, DELETE, INSERT, UPDATE, DROP)을 필터링함.
+    $filter=array('./','../','.htm','.html','.jpg','.png','.gif','.pdf','.JPG',';','<','>','javascript', 'vbscript', 'expression', 'applet', 'meta ', '<xml','xml ', 'blink', 'link', 'style ','script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound','onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbefoCRUopy', 'onbefoCRUut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'src=', 'src =', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload','union ','delete(','update(','insert(','select(','select*','select ','delete ','insert ','update ','drop ',' or ','sleep(','if(','now(','__SF_'); 
+	$g=false;
+	$p=false;
+	if(isset($_GET)) {
+		foreach($_GET as $key=>$val) {
+			if(sqlFilter($val)!=$val) {
+				$g=filterCRUord('GETF_'.$key,$val);
+				return false;
+				break;
+			} else {
+				foreach($filter as $k=>$v) {
+					if(strpos($val,$v)!==false) { 
+						$_GET[$key]=str_replace($v,"ZZ_".$v."|",$_GET[$key]);
+						$g=filterCRUord('GET_'.$key,$val);
+						return false;
+						break;
+					}
+				}
+			}
+			if($g) break;
+		}
+	}
+	if(isset($_POST)) {
+		if(!isset($_SERVER['HTTP_REFERER']) || (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],$_SERVER['HTTP_HOST'])!==false)) {
+			foreach($_POST as $key=>$val) {
+				if(sqlFilter($val)!=$val) {
+					$p=filterCRUord('POSTF_'.$key,$val);
+					return false;
+					break;
+				} else if($key=="skey") {
+					$chks=chkSkey();
+					if($chks<100) {
+						$p=filterCRUord('POST_SKEY_'.$chks,$val);
+						return false;
+						break;
+					}
+				} else {
+					foreach($filter as $k=>$v) {
+						if(strpos($val,$v)!==false) {
+							$_POST[$key]=str_replace($v,"ZZ_".$v."|",$_POST[$key]);
+							$p=filterCRUord('POST_'.$key,$val);
+							return false;
+							break;
+						}
+					}
+				}
+				if($p) break; 
+			}
+		} else {
+			$cdata['referer']=$_SERVER['HTTP_REFERER'];
+			$cdata['host']=$_SERVER['HTTP_HOST'];
+			$p=filterCRUord('REFERER',$_SERVER['HTTP_REFERER']);
+			$result=false;
+		}
+	}
+	if($g==false && $p==false) $result=true; else $result=false;
+	return $result;
+}
+
+
+
+function filterCRUord($key,$val) {
+	global $member,$datetime,$sock_int;
+	$delim="|";
+	$id=$_SESSION['wallet']['id'];
+	if(isset($_SESSION['wallet'])) $sess=sqlFilter(varPrint($_SESSION['wallet'])); else $sess="-";
+	$cookie=sqlFilter(varPrint($_COOKIE));
+	$get=sqlFilter(varPrint($_GET));
+	$post=sqlFilter(varPrint($_POST));
+	if(isset($_SERVER['HTTP_REFERER'])) $referer=sqlFilter($_SERVER['HTTP_REFERER']); else $referer="-";
+	$host=$_SERVER['HTTP_HOST'];
+	$accept=sqlFilter($_SERVER['HTTP_ACCEPT']);
+	$accept_lang=sqlFilter($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+	$request_uri=$_SERVER['REQUEST_URI'];
+	$client=sqlFilter($_SERVER['HTTP_USER_AGENT']);
+	$block_key=$key;
+	$block_val=sqlFilter($val);
+	$ipcheck=$_SERVER['REMOTE_ADDR'];
+	$state=1;
+	$sql="insert into Site_firewall	(rowid, id, sess, cookie, get, post, referer, host, accept, accept_lang, request_uri, block_key, block_val, client, ipcheck, state, regtime) values ('','".$id."','".$sess."','".$cookie."','".$get."','".$post."','".$referer."','".$host."','".$accept."','".$accept_lang."','".$request_uri."','".$block_key."','".$block_val."','".$client."','".$ipcheck."','".$state."','".$datetime."')";
+	$rs=mysqli_query($sock_int,$sql);
+	//echo $sql."<Br>";
+	return $rs;
+}
+
+
+function chkSkey() {
+	global $time_stamp;
+	$skey=hDecode($_POST['skey']);
+	$sskey=hDecode($_SESSION['wallet']['skey']);
+	$sskeyArr=explode("_",$sskey);
+	if($_POST['skey']==$_SESSION['wallet']['skey'] && false) {
+		return 1;
+	} else if(strpos($skey,"_")!==false) {
+		$skeyArr=explode("_",$skey);
+		if($skeyArr[0]>$time_stamp || $time_stamp>$skeyArr[0]+20*60) {
+			return 2;
+		} else {
+			if(strtolower($skeyArr[1])!=strtolower($_SESSION['wallet']['id'])) {
+				return 4;
+			} else if($skeyArr[2]!=$_SERVER['REMOTE_ADDR']) {
+				return 5;
+			} else if($skeyArr[3]>='10000' && $skeyArr[3]<='99999') {
+				if($skeyArr[3]!=$sskeyArr[3] && $skeyArr[3]-$sskeyArr[3]<3) {
+					return 3;
+				} else {
+					return 100;	
+				}
+			}
+		}
+	}
+	return 10;
+}
+
+// Func
+function translate($eng) {
+	$lang="";
+	if(isset($_SESSION['wallet']['lang'])) {
+		if($_SESSION['wallet']['lang']!="eng") {
+			if(strlen($_SESSION['wallet']['lang'])<5 && $_SESSION['wallet']['lang']>'') {
+				$lang=dataValue("Site_language",$_SESSION['wallet']['lang'],"eng='".$eng."' order by sort desc limit 1");
+				if(!$lang){
+					$row=dataValue("Site_language","rowid","eng='".$eng."' order by sort desc limit 1");
+					if(!$row) {
+						$datai['eng']=$eng;
+						$rs=dataInsert("Site_language",$datai);
+					}
+				}
+			}
+		}
+	}
+	if(!$lang) {
+		$lang=str_replace("\\","",$eng);
+	}
+	
+	return $lang;
+}
+
+function alert($msg){
+	$msg=translate($msg);
+	echo "<script>alert('".$msg."');</script>";
+}
+
+function alert0($msg){
+	echo "<script>alert('".$msg."');</script>";
+}
+
+function move($url){
+	if(!$url){
+		echo "<script>alert('test');function goback() {alert('test');window.history.go(-1);};goback();</script>";
+		//echo "<script>history.go(-1);</script>";
+	}else{
+		echo "<script>location.href='$url';</script>";
+	}
+}
+
+function alertMove($msg , $url){
+	$result="alert('".$msg."');";
+	if(!$url){
+		$result.="history.go(-1);";
+	}else{
+		$result."location.href='$url';";
+	}
+	echo "<script>".$result."</script>";
+	return;
+}
+
+
+
+function inImplode($arr,$delim="','") {
+	if(is_array($arr)) {
+		$result=implode($delim,$arr);
+	} else {
+		$result=$arr;
+	}
+	return $result;
+}
+
+function varPrint($arr,$delim="|") {
+	$result="";
+	if(is_array($arr)) {
+		foreach($arr as $key=>$val) {
+			$result.="[".$key."]=".$val."|";
+		}
+	} else {
+		$result=$arr;
+	}
+	return $result;
+}
+
+/// DB
+
+
+function fieldArr($stable) {
+	global $sock_int;
+	$result=mysqli_query($sock_int,"select * from ".$stable); 
+	for($i=0;$i<mysqli_num_fields($result);$i++) {
+		$fieldTable[$i]=mysqli_field_name($result,$i); 
+	} 
+	return $fieldTable;
+}
+
+function copyRow($setTable,$rowid) {
+	global $debugging,$sock_int;
+	
+	$fArr=fieldArr($setTable);
+	unset($fArr[0]);
+	$fStr=implode(",",$fArr);
+	$ins="insert into ".$setTable."	(rowid,".$fStr.") 
+			select 	'', ".$fStr." from ".$setTable." where rowid='".$rowid."'";
+	$rs=mysqli_query($sock_int,$ins);
+	if($debugging=="yes") echo $ins."<br>";
+
+	return $rs;
+}
+
+function copyRow2($setTable,$setTable2,$rowid) {
+	global $debugging,$sock_int;
+	$fArr=fieldArr($setTable);
+	unset($fArr[0]);
+	$fStr=implode(",",$fArr);
+	$fStr2=str_replace("crowid","rowid",$fStr);
+	$ins="insert into ".$setTable."	(rowid,".$fStr.") 
+			select 	'',".$fStr2." from ".$setTable2." where rowid='".$rowid."'";
+	$rs=mysqli_query($sock_int,$ins);
+	if($debugging=="yes") echo $ins."<br>";
+	return $rs;
+}
+
+
+function dataValue($setTable,$selField,$where) {
+	global $debugging,$sock_int;
+	$sql="select ".$selField." from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int,$sql);
+	$sel=mysqli_fetch_assoc($qr);
+	if(strpos($selField," as ")!==FALSE) {
+		$ex=explode(" as ",$selField);
+		$selField=$ex[1];
+	}
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $sel[$selField];
+}
+
+function dataValueArr($setTable,$selField,$where) {
+	global $debugging,$sock_int;
+	$sql="select ".$selField." from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int,$sql);
+	if(strpos($selField," as ")!==FALSE) {
+		$ex=explode(" as ",$selField);
+		$selField=$ex[1];
+	}
+	while($data=mysqli_fetch_assoc($qr)){
+		$sel[]=$data[$selField];
+	}
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $sel;
+}
+
+function dataQuery($setTable,$where) {
+	global $debugging,$sock_int;
+	$sql="select * from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int,$sql);
+	$sel=mysqli_fetch_assoc($qr);
+	if(strpos($selField," as ")!==FALSE) {
+		$ex=explode(" as ",$selField);
+		$selField=$ex[1];
+	}
+	mysqli_free_result($qr);
+	return $sel;
+}
+
+function sqlFetch($sql) {
+	global $debugging,$sock_int;
+	$qr=mysqli_query($sock_int,$sql);
+	while($data=mysqli_fetch_assoc($qr)) {
+		$list[]=$data;	
+	}
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $list;
+}
+
+function dataArr0($setTable,$where) {
+	global $debugging,$sock_int;
+	$sql="select * from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int,$sql);
+	$sel=mysqli_fetch_assoc($qr);
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $sel;
+}
+
+function dataArr($setTable,$where) {
+	global $debugging,$sock_int;
+	$sql="select * from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int,$sql);
+
+	while($data=mysqli_fetch_assoc($qr)){
+		$sel[]=$data;
+	}
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $sel;
+}
+
+function dataIns($setTable,$delField) {
+	global $debugging,$datetime,$sock_int;
+	$sql="insert into ".$setTable." set ";
+	foreach($_POST as $key=>$val) {
+		if(!in_array($key,$delField)) {
+			if($key=="pass" || $key=="pass2" || $key=="pass3") {
+				$val=md5(md5($val));
+			} else if($key=="ipcheck") {
+				$val=$_SERVER['REMOTE_ADDR'];
+			}
+			$sql.=$key."='".$val."', ";
+		}
+	}
+	$sql.="regtime='".$datetime."'";
+	$rs=mysqli_query($sock_int,$sql);
+	if($debugging=="yes") echo $sql."<br>";
+	return $rs;
+}
+
+function dataInsert($setTable,$data) {
+	global $debugging,$datetime,$sock_int;
+	$chkr="n";
+	$chkj="n";
+	$sql="insert into ".$setTable." set ";
+	foreach($data as $key=>$val) {
+		if($key=="ipcheck" && $val=="") $val=$_SERVER['REMOTE_ADDR'];
+		if($key=="regtime") $chkr="y";
+		if($key=="joindate") $chkj="y";
+		$sql.=$key."='".$val."', ";
+	}
+	if($chkr!="y" && $chkj!="y") $sql.="regtime='".$datetime."'"; else $sql.="rowid=0";
+	$rs=mysqli_query($sock_int,$sql);
+	if($debugging=="yes") echo $sql."<br>";
+	return $rs;
+}
+
+function dataInsert2($setTable,$data) {
+	global $debugging,$datetime,$sock_int2;
+	$chkr="n";
+	$sql="insert into ".$setTable." set ";
+	foreach($data as $key=>$val) {
+		if($key=="pass" || $key=="pass2" || $key=="pass3") {
+			$val=md5(md5($val));
+		} else if($key=="ipcheck" && $val=="") {
+			$val=$_SERVER['REMOTE_ADDR'];
+		}
+		if($key=="regtime") $chkr="y";
+		$sql.=$key."='".$val."', ";
+	}
+	if($chkr!="y") $sql.="regtime='".$datetime."'"; else $sql.="rowid=0";
+	if($debugging=="yes") echo $sql."<br>";
+	$rs=mysqli_query($sock_int2,$sql);
+	return $rs;
+}
+
+function dataUpdate($setTable,$data,$rowid) {
+	global $debugging,$sock_int;
+	$sql="update ".$setTable." set ";
+	foreach($data as $key=>$val) {
+		if($key=="pass" || $key=="pass2" || $key=="pass3") {
+			$val=md5(md5($val));
+		} else if($key=="ipcheck") {
+			$val=$_SERVER['REMOTE_ADDR'];
+		}
+		$sql.=$key."='".$val."', ";
+	}
+	$sql.=" rowid=rowid";
+	$sql.=" where rowid=".$rowid;
+	$rs=mysqli_query($sock_int,$sql);
+	if($debugging=="yes") echo $sql."<br>";
+	return $rs;
+}
+
+function dataUpdate2($setTable,$data,$where) {
+	global $debugging,$sock_int;
+	$sql="update ".$setTable." set ";
+	foreach($data as $key=>$val) {
+		if($key=="pass" || $key=="pass2" || $key=="pass3") {
+			$val=md5(md5($val));
+		} else if($key=="ipcheck") {
+			$val=$_SERVER['REMOTE_ADDR'];
+		}
+		$sql.=$key."='".$val."', ";
+	}
+	$sql.=" rowid=rowid";
+	$sql.=" where ".$where;
+	$rs=mysqli_query($sock_int,$sql);
+	if($debugging=="yes") echo $sql."<br>";
+	return $rs;
+}
+
+function dataIns2($setTable,$delField) {
+	global $debugging,$datetime,$sock_int2;
+	$sql="insert into ".$setTable." set ";
+	foreach($_POST as $key=>$val) {
+		if(!in_array($key,$delField)) {
+			if($key=="pass" || $key=="pass2" || $key=="pass3") {
+				$val=md5(md5($val));
+			} else if($key=="ipcheck") {
+				$val=$_SERVER['REMOTE_ADDR'];
+			}
+			$sql.=$key."='".$val."', ";
+		}
+	}
+	$sql.="regtime=now()";
+	$rs=mysqli_query($sock_int2,$sql);
+	if($debugging=="yes") echo $sql."<br>";
+	return $rs;
+}
+
+function dataArr02($setTable,$where) {
+	global $debugging,$sock_int2;
+	$sql="select * from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int2,$sql);
+	$sel=mysqli_fetch_assoc($qr);
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $sel;
+}
+
+
+function dataValue2($setTable,$selField,$where) {
+	global $debugging,$sock_int2;
+	$sql="select ".$selField." from ".$setTable." where ".$where;
+	$qr=mysqli_query($sock_int2,$sql);
+	$sel=mysqli_fetch_assoc($qr);
+	if(strpos($selField," as ")!==FALSE) {
+		$ex=explode(" as ",$selField);
+		$selField=$ex[1];
+	}
+	if($debugging=="yes") echo $sql."<br>";
+	mysqli_free_result($qr);
+	return $sel[$selField];
+}
+
+
+function selectOption($arr,$sel,$label='') {
+	if(is_array($arr)) {
+		foreach($arr as $key=>$val) {
+			if($sel==$val) $select="selected"; else $select="";
+			if($label) $labelv=$label.$val; else $labelv=$val;
+			$result.="\t\t\t\t<option value='".$val."' ".$select.">".$labelv."</option>\n";
+		}
+	}
+	return $result;
+}
+
+function selectOption2($arr,$sel,$value,$label) {
+	if(is_array($arr)) {
+		foreach($arr as $key=>$val) {
+			if($sel==$val[$value]) $select="selected"; else $select="";
+			$result.="\t\t\t\t<option value='".$val[$value]."' ".$select.">".$val[$label]."</option>\n";
+		}
+	}
+	return $result;
+}
+
+
+function setOption($stable,$chkdata) {
+	global $id;
+	$Rs=mysqli_query($sock_int,"select * from ".$stable." where id='".$id."' and del=0 and state=1 order by regtime asc");
+	$Set="";
+	while($data=mysqli_fetch_assoc($Rs)) {
+		if($chkdata==$data['rowid']) $checked="selected"; else $checked="";
+		$Set.="\t\t\t\t<option value='".$data['rowid']."' ".$checked.">".$data['title']."</option>\n";
+	}
+	return $Set;
+}
+
+function chainOption($stable,$chkdata) {
+	global $id;
+	$Rs=mysqli_query($sock_int,"select * from ".$stable." where id='".$id."' and del=0 and state=1 order by regtime asc");
+	$Set="";
+	while($data=mysqli_fetch_assoc($Rs)) {
+		if($chkdata==$data['rowid']) $checked="selected"; else $checked="";
+		$Set.="\t\t\t\t<option value='".$data['rowid']."' class='".$stable."' ".$checked.">".$data['title']."</option>\n";
+	}
+	return $Set;
+}
+
+
+
+
+function isMail($e_mail){ 
+	if( !preg_match("/^[^ ]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-]/i", $e_mail )) { 
+		return 2;
+	}
+	for( $i=1; $i< strlen( $e_mail ); $i++ ) { 
+		if(( Ord( substr( "$e_mail", $i-1,$i )) & 0x80 )) return false; 
+	}
+	//$e_mail = AddSlashes( $e_mail );
+	return 1;
+}
+
+
+function sendemail_send($email,$title,$contents){
+		$url="https://api.submail.cn/mail/send.json";
+		$c=curl_init();
+		$ag='Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7 (.NET CLR 3.5.30729)';
+			
+		 // CCCC office@digitcoin.biz support@dgcexchange.org
+		 //CURLOPT_POSTFIELDS=>'appid=11100&to='.$email.'&subject='.$title.'&text='.$contents.'&from=office@digitcoin.biz&signature=ee74c0020a169c8565be64043995849f',
+		if(strpos($email,'@126.com')!==false || strpos($email,'@163.com')!==false || strpos($email,'@year.net')!==false) {
+			$from="admin@dgcexchange.org";
+		} else {
+			$from="office@dgcexchange.org";
+		}		
+		
+		$opt=array(
+		  CURLOPT_URL=>$url,
+		  CURLOPT_POST=>1,
+		  CURLOPT_POSTFIELDS=>'appid=11582&to='.$email.'&subject='.$title.'&text='.$contents.'&from='.$from.'&signature=ec1590784d183c160f76e50504162d02',
+		  CURLOPT_RETURNTRANSFER=>1,
+		  CURLOPT_FOLLOWLOCATION=>1,
+		  CURLOPT_SSL_VERIFYPEER=>false,
+		  CURLOPT_SSL_VERIFYHOST=>0,
+		  CURLOPT_USERAGENT=>$ag
+		);
+		curl_setopt_array($c,$opt);
+		$output=curl_exec($c);
+		if(strpos($output,'status":"success"')!==false) $result="1"; else $result="";
+
+		return $result;
+}
+
+
+function sendemail_dgc98($id,$title,$contents,$keyword=''){
+	global $sock_int2;
+	//$setId=array('1','test','test3','test6','test111','china1','china','test123456','dddd12','xiyangyang01','test999','kim07','kim08','kim09','kim10','kim222','kim333','kim20','kim1234','kim111','kim001');
+	//if(!in_array($_SESSION['wallet']['loginid'],$setId)) return 10;
+
+	date_default_timezone_set('Asia/Hong_Kong');
+	$time_stamp=time();
+	$datetime=date("Y-m-d H:i:s",$time_stamp);
+
+	include $_SERVER['DOCUMENT_ROOT']."/_dbcon_mail.html";
+	$pageinfo=str_replace($_SERVER['HTTP_HOST'],"",$_SERVER['HTTP_REFERER']);
+	$pageinfo=str_replace("https:///","",$pageinfo);
+	$pageinfo=str_replace("http:///","",$pageinfo);
+	$pageinfo=str_replace("https://","",$pageinfo);
+	$pageinfo=str_replace("http://","",$pageinfo);
+	
+	$data['mailbox']='inbox';
+	$data['id']=$id;
+	$data['title']=$title;
+	$data['content']=$contents;
+	$data['keyword']=$keyword;
+	$data['pageinfo']=$pageinfo;
+	$data['relid']='admin@dgcexchange.org';
+	$data['star']='0';
+	$data['del']='0';
+	$data['reading']='0';
+	$data['used']='0';
+	$data['state']='1';
+	$data['attach']='';
+	$data['ipcheck']='';
+	$data['regtime']=$datetime;
+	$rs=dataInsert2("Member_email",$data);
+	return $rs;
+}
+
+function sendemail_send0011($email,$title,$contents){
+	include_once $_SERVER['DOCUMENT_ROOT']."/_lib_mail.html";
+	$sendmail = new Sendmail();
+	$to=$email; 
+	$from="DGC Exchange";
+	$subject=$title;
+	$body=$contents;
+	$cc_mail="";
+	$bcc_mail="";
+	$result=$sendmail->send_mail($to, $from, $subject, $body,$cc_mail,$bcc_mail);
+	if(!$result) $result=1;
+	return $result;
+}
+
+function sendemail_send00($email,$title,$contents){
+	$receiver_email = $email;
+	$mail_body = "
+	<html>
+	<head>
+	<meta http-equiv=Content-Type content=text/html; charset=utf-8 />
+	<title>Digital Coin Global</title>
+	<style type=text/css>
+	body{margin:0px;}
+	</style>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td>
+					&nbsp;
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<pre>".$contents."</pre>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+	</body>
+	</html>
+	";
+
+	//발송자 정보
+	$send_name	= "yongwn0@naver.com";
+	$send_email	= "yongwn@dreamwiz.com";
+	$header = "From:".$send_email."<".$send_name.">\nContent-type:text/html;\n";
+	$header .= "Return-Path : ".$receiver_email."\n";
+	$header .= "X-Mailer : PHP WebMail \n";
+	$result=mail($receiver_email,$title,$mail_body,$header);
+	return $result;
+}
+
+function setVar($var) {
+	$result="";
+	if(!empty($_POST[$var])) $result=$_POST[$var];
+	if(!empty($_GET[$var])) $result=$_GET[$var];
+	$result=sqlFilter($result);
+	return $result;
+}
+
+
+function loginOnly($mode="") {
+	//global $member;
+	
+	//$setId=array('1','2','admin','sahyun1336','jmh1427','wyb3642','kim01','kim02','kim04','kim05','kim06');
+	$setId=array('kim04','kim05','test');
+	if(in_array($_SESSION['wallet']['loginid'],$setId)) return 10;
+	
+	if($_POST && $_SERVER['REMOTE_ADDR']!="14.33.245.98") {
+		$site_open=dataValue("Site_cate","val","cate='base' and title='site_open' and state=1 order by regtime desc limit 1");
+		date_default_timezone_set('Asia/Hong_Kong');
+		$todaytime=Date("H:i:s");
+		$member['withdraw']=dataValue("Wallet","withdraw","loginid='".$_SESSION['wallet']['loginid']."'");
+
+		if($member['withdraw']==3) {
+			if($mode=="ajax") {
+				echo '{"code":"100","msg":"'.translate('This ID does not active.').'"}';
+				exit;
+				unset($_POST);
+			} else {
+				alert('This ID does not active.');
+				unset($_POST);
+			}
+		} else if($site_open=="close") {
+			if($mode=="ajax") {
+				echo '{"code":"200","msg":"'.translate('You cannot trading now.\nPlease wait until openning officially.').'"}';
+				exit;
+				unset($_POST);
+			} else {
+				alert('Service not opened');
+				unset($_POST);
+			}
+		} else if($site_open=="time") {
+			$site_open_start=dataValue("Site_cate","val","cate='base' and title='site_open_start' and state=1 order by regtime desc limit 1");
+			$site_open_end=dataValue("Site_cate","val","cate='base' and title='site_open_end' and state=1 order by regtime desc limit 1");
+
+			if($todaytime>$site_open_start.':00:00' && $todaytime<$site_open_end.':00:00'){
+			} else {
+				$msg=translate('Service not opened').' ['.$site_open_end.':00 ~ '.$site_open_start.':00]';
+				if($mode=="ajax") {
+					echo '{"code":"200","msg":"'.$msg.'"}';
+					exit;
+					unset($_POST);
+				} else {
+					alert($msg);
+					unset($_POST);
+				}
+			}
+		}
+	}
+	if($_POST) {
+		foreach($_POST as $key=>$val) {
+			$_POST[$key]=sqlFilter($val);
+		}
+	}
+	return 1;
+}
+
+
+
+function sellWallet($sval,$inputid,$total=0) {
+	global $todate;
+	if($total==0) $total=$sval['total'];
+	$data['inputid']=$inputid;
+	$data['id']=$sval['id'];
+	$data['cno']=$sval['cno'];
+	$data['gtype']='trade_sell';
+	$data['cash']=$total;
+	$data['commission']=0;
+	$data['ctype']='usd';
+	$data['paydate']=$todate;
+	$data['paydata']='complete_'.$sval['rowid'];
+
+	$data['state']=1;
+	$data['ipcheck']="";
+	$data['regtime']="";
+	$data['hashid']=$data['paydata'].$data['cno'].$data['cash'].$data['id'];
+
+	$chk=dataValue("Cash_usd","id","id='".$data['id']."' and inputid='".$data['inputid']."' and cno='".$data['cno']."' and gtype='trade_sell' and state=1 and paydata='".$data['paydata']."'");
+	if($chk==$data['id']) {
+		$res="";
+	} else {
+		$res=dataInsert("Cash_usd",$data);
+	}
+	return $res;
+}
+
+function exchangeDiv($val,$rest) {
+	$data=$val;
+	if($val['amount']+0>$rest+0) {
+		$chk=dataValue("Cash_exchange","id","vrowid='".$val['rowid']."' and amount='".$rest."' and state=1");
+		if($chk) {
+		} else {
+			$data['vrowid']=$data['rowid'];
+			$data['state']=1;
+			$data['amount']=$rest;
+			$data['sum']=$data['amount']*$val['dprice'];
+			$data['fee']=$val['fee']*($data['amount']/$val['amount']);
+			$data['total']=$data['sum']-$data['fee'];
+			$data['paydata']=$val['paydata']+1;
+			unset($data['rowid']);
+
+			$res=dataInsert("Cash_exchange",$data);
+			if($res) {
+				$data['state']=0;
+				$data['amount']=$val['amount']-$rest;
+				$data['sum']=$data['amount']*$val['dprice'];
+				$data['fee']=$val['fee']*($data['amount']/$val['amount']);
+				$data['total']=$data['sum']-$data['fee'];
+				$data['paydata']=$val['paydata']+2;
+				$res2=dataInsert("Cash_exchange",$data);
+			}
+		} 
+	}
+	return $res;
+}
+
+
+function UpLoadProcess($filename,$time=""){
+	global $newfile,$time_stamp;
+	$newfile="";
+	if(!$time) $time=$time_stamp;
+
+	if($filename=="file") {
+		$dir="/cubechain/_cubefile";
+	} else if($filename=="memfile") {
+		$dir=$_SERVER['DOCUMENT_ROOT']."/upload/member/";
+	} else if($filename=="boardfile") {
+		$dir=$_SERVER['DOCUMENT_ROOT']."/upload/board/";
+	} else if($filename=="icofile") {
+		$dir=$_SERVER['DOCUMENT_ROOT']."/upload/ico/";
+	} else if($filename=="minfile") {
+		$dir=$_SERVER['DOCUMENT_ROOT']."/upload/mining/";
+	} else if($filename=="popfile") {
+		$dir=$_SERVER['DOCUMENT_ROOT']."/upload/popup/";
+	} else {
+		$dir=$_SERVER['DOCUMENT_ROOT']."/upload/";
+	}
+
+	$varName	=	$filename; 
+	$allowExt	=	"jpg,gif,png,jpeg,png,bmp,pdf,hwp,xls,ppt,doc"; 
+	$prefix		=	$varName."_".$time; 
+
+	
+
+	if($_FILES[$varName][name] && $_FILES[$varName][error] == 0) {
+		if(!$dir) {
+			goBack("no path");
+			return false;
+		}
+		if(!is_writable($dir)) {
+			goBack("no permission ".$dir);
+			return false;
+		}
+
+		$allowSize = intval(substr(ini_get(upload_max_filesize),0,-1)) * 1024 * 1024;
+		if($allowSize < $_FILES[$varName][size]) {
+			goBack("over size");
+			return false;
+		}
+
+		if(is_uploaded_file($_FILES[$varName][tmp_name])) {
+			$ext = strtolower(substr(strrchr($_FILES[$varName][name],"."),1));
+			if($ext) {
+				$allow = explode(",",$allowExt);
+				if(is_array($allow)) $check = in_array($ext,$allow);
+				else $check = ($ext == $allow) ? true : false;
+			}
+			if(!$ext || !$check) {
+				goBack("Invalid file type.");
+				return false;
+			}
+
+			$newfile = $prefix.".".$ext;
+			if(file_exists($dir.$newfile)) {
+				goBack("Same filename exists. Upload after rename file.");
+				return false;
+			}
+			if(!move_uploaded_file($_FILES[$varName][tmp_name], $dir.$newfile)) {
+				goBack("Failure file upload");
+				return false;
+			}
+			if(!chmod($dir.$newfile,0707)) {
+				goBack("Failure permission.");
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+
+function UploadCube($filename,$cubeno,$time=""){
+	global $newfile,$time_stamp;
+	$newfile="";
+	if(!$time) $time=$time_stamp;
+	$filecube=ceil($cubeno/10000);
+	$dir="/cubechain/_cubefile/".$filecube;
+	$varName=$filename; 
+	$allowExt="cub"; 
+	if($_FILES[$varName]['name'] && $_FILES[$varName]['error'] == 0) {
+		if(!is_dir($dir)) {
+			echo("make path".$dir);
+			mkdir($dir, 0777);
+		}
+		if(!is_dir($dir)) {
+			echo("no path");
+			return false;
+		}
+		if(!is_writable($dir)) {
+			echo("no permission ".$dir);
+			return false;
+		}
+		$allowSize = intval(substr(ini_get('upload_max_filesize'),0,-1)) * 1024 * 1024;
+		if($allowSize < $_FILES[$varName]['size']) {
+			echo("over size");
+			return false;
+		}
+		if(is_uploaded_file($_FILES[$varName]['tmp_name'])) {
+			$ext=strtolower(substr(strrchr($_FILES[$varName]['name'],"."),1));
+			$check = ($ext == $allowExt) ? true : false;
+			if(!$ext || !$check) {
+				echo("Invalid file type.");
+				return false;
+			}
+			$dir.="/";
+			$newfile=$_FILES[$varName]['name'];
+			if(file_exists($dir.$newfile)) {
+				echo("Same filename exists. Upload after rename file.");
+				return false;
+			}
+			if(!move_uploaded_file($_FILES[$varName]['tmp_name'], $dir.$newfile)) {
+				echo("Failure file upload");
+				return false;
+			}
+			if(!chmod($dir.$newfile,0777)) {
+				echo("Failure permission.");
+				return false;
+			}
+			
+			$cpath=cubeToPath($cubeno);
+			$filepath='/data/bdata/'.$cpath;
+			if(file_exists($filepath)) {
+				delete_all($filepath);				
+			} else {
+				mkdir($filepath);
+			}
+			$filepath.="/";
+			if(!copy($dir.$newfile,$filepath.$newfile)) { 
+				return false;
+			} else {
+				if(!chmod($filepath.$newfile,0755)) {
+					//echo("Failure permission.");
+				}
+			}
+			cubeConfirm($cubeno,$filepath);
+		}
+	}
+	return true;
+}
+
+
+function delete_dir_all($dir) {
+	$d=@dir($dir);
+	while ($entry = $d->read()) {
+		if ($entry == "." || $entry == "..") continue;
+		if (is_dir($entry)) {
+			delete_all($entry); 
+		} else {
+			unlink($dir."/".$entry);
+		}
+	}
+}
+
+
+
+function goBack($msg='', $url='') {
+	echo "<script>";
+	if($msg) echo 'alert("'.$msg.'");';
+	if($url) echo 'location.replace("'.$url.'");';
+	else echo '';
+	echo "</script>";
+}
+
+
+
+?>

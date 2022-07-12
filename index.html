@@ -1,0 +1,27 @@
+<?
+if(!$_SERVER['QUERY_STRING']) {
+	header("HTTP/1.0 404 Not Found");
+	exit;
+}
+
+include "./_config.html";
+
+
+
+
+if($pagef!="api" && $pagef!="client" && $pagef!="check") {
+	firewallLog("not api");
+	header("HTTP/1.0 404 Not Found");
+	exit;
+}
+
+if(file_exists(basePath."/".$pagef.".html")) {
+	include basePath."/".$pagef.".html";
+	if($sock_int) mysqli_close($sock_int);
+} else {
+	firewallLog("file not exist.");
+	header("HTTP/1.0 404 Not Found");
+	exit;
+}
+
+?>

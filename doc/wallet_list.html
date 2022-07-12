@@ -1,0 +1,193 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">지갑 조회</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									지갑내 연결되어 있는 NFT 아이템을 조회합니다.<br>
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>walletId</td>
+											<td>String</td>
+											<td>조회할 지갑의 아이디</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>contentNo</td>
+											<td>Number</td>
+											<td>해당 번호의 게임 컨텐츠</td>
+											<td>*</td>
+											<td>0 : 모든 게임 컨텐츠</td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>type</td>
+											<td>Number</td>
+											<td>해당 번호의 아이템 종류</td>
+											<td>*</td>
+											<td>0 : 모든 아이템 종류</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data (Array) </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>hashCode</td>
+											<td>String</td>
+											<td>NFT 등록 해시코드</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>tokenId</td>
+											<td>Number</td>
+											<td>NFT 생성 토큰번호</td>
+											<td>*</td>
+											<td>NFT 생성시 자동 증가 고유값</td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>contentNo</td>
+											<td>Number</td>
+											<td>게임 컨텐츠 번호</td>
+											<td>*</td>
+											<td>0 : 모든 게임 컨텐츠</td>
+										</tr>
+										<tr>
+											<th scope="row">4</th>
+											<td>type</td>
+											<td>Number</td>
+											<td>아이템 종류 번호</td>
+											<td>*</td>
+											<td>0 : 모든 아이템 종류</td>
+										</tr>
+										<tr>
+											<th scope="row">5</th>
+											<td>no</td>
+											<td>Number</td>
+											<td>아이템 고유번호</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">6</th>
+											<td>grade</td>
+											<td>Number</td>
+											<td>NFT의 등급</td>
+											<td>*</td>
+											<td>검색시 사용</td>
+										</tr>
+										<tr>
+											<th scope="row">7</th>
+											<td>attribute</td>
+											<td>String</td>
+											<td>아이템 속성값</td>
+											<td>*</td>
+											<td>데이터 변경을 위해 정보가 담긴 url 사용</td>
+										</tr>
+										<tr>
+											<th scope="row">8</th>
+											<td>tradeStatus</td>
+											<td>Number</td>
+											<td>거래 가능 여부</td>
+											<td></td>
+											<td>0 : 거래 불가 (게임에서 사용) <br>1 : 거래 가능 상태 (지갑에서 대기) <br> 2 : 거래중 (마켓에서 판매 등록)</td>
+										</tr>
+										<tr>
+											<th scope="row">9</th>
+											<td>optionHash</td>
+											<td>String</td>
+											<td>옵션 연결 해시값</td>
+											<td>*</td>
+											<td>옵션 연결 안되었을시 : null값</td>
+										</tr>
+										<tr>
+											<th scope="row">10</th>
+											<td>regtime</td>
+											<td>Datetime</td>
+											<td>등록시간</td>
+											<td>*</td>
+											<td>날짜형식 2021-10-27 23:10:20</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<? include __DIR__."/_example.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,42 @@
+<?
+
+//addr, fee_addr, name, symbol, amount, set_decimal, description, official, social_link, pic, delete_ok, delete_setting, freeze_ok, freeze_setting, use_date, pow_ok, add_token_ok, auto_ok, fee_ok, fee_amount, admin_ok
+
+if(isset($req['params']['fromWallet']) && !empty($req['params']['fromWallet'])) {
+	$data['addr']=$req['params']['fromWallet'];
+	$data['addr']=trim($data['addr']);
+}
+
+if(isset($req['params']['tokenSymbol']) && !empty($req['params']['tokenSymbol'])) {
+	$data['symbol']=$req['params']['tokenSymbol'];
+	$csym=dataValue("token","addr","symbol='".$data['symbol']."'")+0;
+	if($csym!=$data['addr']) jsonErrorResult(914);
+} else {
+	jsonErrorResult(902);
+}
+
+
+if(!$data['addr']) jsonErrorResult(906);
+$wrow=dataValue("wallet","rowid","addr='".$data['addr']."' and stat=1")+0;
+if($wrow==0) jsonErrorResult(908);
+
+$cok=dataValue("token","admin_ok","symbol='".$data['symbol']."'");
+if($cok!="yes") jsonErrorResult(915);
+
+$privateKey=$req['params']['privateKey'];
+if(!$privateKey) jsonErrorResult(911);
+
+$pverify=pkVerify($data['addr'],$privateKey);
+if(!$pverify) jsonErrorResult(912);
+
+
+$datau['stat']=9;
+$rs=dataUpdate2("token",$datau,"symbol='".$req['params']['tokenSymbol']."' and stat=1");
+if(!$rs) jsonErrorResult(103);
+
+
+$res['data']=array();
+$res['data']['tokenSymbol']=$req['params']['tokenSymbol'];
+$res['success']='OK';
+$res['msg']='토큰 삭제에 성공했습니다.';
+?>

@@ -1,0 +1,13 @@
+<?
+$addr=$req['params']['wallet'];
+
+if(!$addr) jsonErrorResult(601);
+
+$symbol="QUB";
+$balance=check_balance($addr, $symbol);
+
+$res['data']=array();
+$res['data']['balance']=$balance;
+$res['success']='OK';
+$res['msg']='코인 보유수량 계산에 성공했습니다.';
+?>

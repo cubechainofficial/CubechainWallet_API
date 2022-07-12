@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zxx" class="js">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./images/favicon.png">
+    <title>API | CubeWallet</title>
+    <link rel="stylesheet" href="./assets/css/dashlite.css?ver=2.0.0">
+    <link id="skin-default" rel="stylesheet" href="./assets/css/theme.css?ver=2.0.0">
+	<script src="./assets/js/jquery.min.js"></script>
+</head>
+
+<body class="nk-body bg-lighter npc-general has-sidebar ">
+    <div class="nk-app-root">
+        <div class="nk-main ">
+            <div class="nk-sidebar nk-sidebar-fixed is-dark " data-content="sidebarMenu">
+                <div class="nk-sidebar-element nk-sidebar-head">
+                    <div class="nk-sidebar-brand">
+						<a href="/doc" class="logo-link nk-sidebar-logo">
+                            <h4 class="text-white"><em class="icon ni ni-dashlite"></em> CubeWallet API</h4>
+                        </a>
+                    </div>
+                    <div class="nk-menu-trigger mr-n2">
+                        <a href="#" class="nk-nav-toggle nk-quick-nav-icon d-xl-none" data-target="sidebarMenu"><em class="icon ni ni-arrow-left"></em></a>
+                    </div>
+                </div>
+                <div class="nk-sidebar-element">
+                    <div class="nk-sidebar-content">
+                        <div class="nk-sidebar-menu" data-simplebar>
+                            <ul class="nk-menu">
+                                <li class="nk-menu-item">
+                                    <a href="./intro" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-dashlite"></em></span>
+                                        <span class="nk-menu-text">Intro</span>
+                                    </a>
+                                </li>
+                                <li class="nk-menu-item">
+                                    <a href="./apikey" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-unlock"></em></span>
+                                        <span class="nk-menu-text">API Key</span>
+                                    </a>
+                                </li>
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">API</h6>
+                                </li>
+                                <!---li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-wallet"></em></span>
+                                        <span class="nk-menu-text">지갑</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="./wallet_create" class="nk-menu-link"><span class="nk-menu-text">지갑 생성</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./wallet_account" class="nk-menu-link"><span class="nk-menu-text">지갑 확인</span></a>
+                                        </li>
+										<li class="nk-menu-item">
+                                            <a href="./wallet_connect" class="nk-menu-link"><span class="nk-menu-text">지갑 연동</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./wallet_list" class="nk-menu-link"><span class="nk-menu-text">지갑 조회</span></a>
+                                        </li>
+                                    </ul>
+                                </li-->
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-coins"></em></span>
+                                        <span class="nk-menu-text">코인</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="./coin_balance" class="nk-menu-link"><span class="nk-menu-text">코인 보유량</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./coin_list" class="nk-menu-link"><span class="nk-menu-text">코인 거래 조회</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./coin_pow" class="nk-menu-link"><span class="nk-menu-text">코인 채굴 조회</span></a>
+                                        </li>
+										<li class="nk-menu-item">
+                                            <a href="./coin_transfer" class="nk-menu-link"><span class="nk-menu-text">코인 이체</span></a>
+                                        </li>
+									</ul>
+                                </li>
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-tag"></em></span>
+                                        <span class="nk-menu-text">토큰</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="./token_list" class="nk-menu-link"><span class="nk-menu-text">토큰 조회</span></a>
+                                        </li>
+										<li class="nk-menu-item">
+                                            <a href="./token_create" class="nk-menu-link"><span class="nk-menu-text">토큰 발행</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./token_edit" class="nk-menu-link"><span class="nk-menu-text">토큰 수정</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./token_delete" class="nk-menu-link"><span class="nk-menu-text">토큰 삭제</span></a>
+                                        </li>
+									</ul>
+                                </li>
+
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-search"></em></span>
+                                        <span class="nk-menu-text">스캔</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="./scan_latest" class="nk-menu-link"><span class="nk-menu-text">스캔 최근 정보</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./scan_cube" class="nk-menu-link"><span class="nk-menu-text">스캔 최근 큐브</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="./scan_transaction" class="nk-menu-link"><span class="nk-menu-text">스캔 최근 거래</span></a>
+                                        </li>
+
+									</ul>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="./exchange_price" class="nk-menu-link">
+										<span class="nk-menu-icon"><em class="icon ni ni-wallet"></em></span>
+                                        <span class="nk-menu-text">거래소 시세 전달</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="./example_php" class="nk-menu-link">
+										<span class="nk-menu-icon"><em class="icon ni ni-file-docs"></em></span>
+                                        <span class="nk-menu-text">PHP Example</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="./error" class="nk-menu-link">
+										<span class="nk-menu-icon"><em class="icon ni ni-alert-circle"></em></span>
+                                        <span class="nk-menu-text">Error Code</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+			<div class="nk-wrap ">
+                <div class="nk-header nk-header-fixed is-light">
+                    <div class="container-fluid">
+                        <div class="nk-header-wrap">
+                            <div class="nk-menu-trigger d-xl-none ml-n1">
+                                <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
+                            </div>
+                            <div class="nk-header-brand d-xl-none">
+                                <a href="/doc" class="logo-link">
+									 <h5 class="text-primary"> CubeWallet API</h5>
+                                </a>
+                            </div>
+                            <div class="nk-header-news d-none d-xl-block">
+                                <div class="nk-news-list">
+                                    <a class="nk-news-item" href="#">
+                                        <div class="nk-news-icon">
+                                            <em class="icon ni ni-card-view"></em>
+                                        </div>
+                                        <div class="nk-news-text1">
+                                            <p><?=strtoupper($pagef)?></p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="nk-header-tools">
+                                <ul class="nk-quick-nav">
+                                    <li class="dropdown user-dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <div class="user-toggle">
+                                                <div class="user-avatar sm">
+                                                    <em class="icon ni ni-card-view"></em>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>

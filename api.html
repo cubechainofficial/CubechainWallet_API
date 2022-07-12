@@ -1,0 +1,40 @@
+<?
+$setApiKey=array(
+	'j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC', // Sample
+	'F62zSdaTIvxGA8kR90UKMep5OVbmWNZjtJqlBDhu',
+	'V5qTpZKexPXABs1M8ftoJjmiQcLIWarlnz6byN30',
+	'wh12tnWANFPayfJrZsqBd0Rmp84CMHgDVbQeioKI',
+	'04dFKMmZAfb3cJIi175p2BY6uoxPNSzOjsyUgwe8',
+	'j9ywiJZDa78N3ElfvsYgKcdAFqHMbnQ2euVz1tTC', // Sample
+);
+
+$headers=apache_request_headers();
+$contype=false;
+
+foreach ($headers as $header => $value) {
+	$header=strtolower($header);
+	$value=trim($value);
+	if($header=='api-key' || $header=='Api-key') $apikey=$value;
+	if($header=='content-type' && $value=='application/json') $contype=true;
+}
+$kstate=apiKeyCheck($apikey);
+
+if($contype!=true) jsonErrorResult(12);
+
+$req=jsonRequest();
+
+
+$incfile=__DIR__."/api_".$req['method'].".html";
+if(!file_exists($incfile)) jsonErrorResult(102);
+
+include $incfile;
+
+foreach($res['data'] as $key=>$val) {
+	if(is_numeric($val)) $res['data'][$key]+=0;
+}
+
+jsonResponse($res,$req['id'],null);
+
+if($sock_int) mysqli_close($sock_int);
+
+?>

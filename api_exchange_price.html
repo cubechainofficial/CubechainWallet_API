@@ -1,0 +1,28 @@
+<?
+//Define('Apikey','023dfa74bdc59a59adf4a5e0f5992b86d26ebebcb8c95c6c');
+$url="https://api.hanbitco.com";
+
+$nonce=$time_stamp.rand(1000000,9999999);
+$trading_pair_name="QUBT-BTC";
+
+$content='?trading_pair_name='.$trading_pair_name;
+$path="/v1/ticker/".$content;
+$url.=$path;
+
+$result=get_data($url);
+$hres=json_decode($result,true);
+
+if($hres['error_code']) jsonErrorResult(701);
+
+$res['data']=array();
+
+if($req['params']['all']=="yes") {
+	$res['data']=$hres[0];
+} else {
+	$price=$hres[0]['close_price'];
+	$res['data']['price']=$price;
+}
+
+$res['success']='OK';
+$res['msg']='거래소 Ticker 호출에 성공했습니다.';
+?>

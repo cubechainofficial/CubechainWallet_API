@@ -1,0 +1,324 @@
+<?
+function apiKeyCheck($apikey) {
+	if(!$apikey) jsonErrorResult(10);
+	$result=apiKeyState($apikey);
+	if(!$result) jsonErrorResult(11);
+	return $result;
+}
+
+function apiKeyState($apikey) {
+	global $setApiKey;
+	if(!in_array($apikey,$setApiKey)) {
+		return 0;
+	}
+	return 1;
+}
+
+function apiKeyState00($apikey) {
+	$result=dataValue("Site_apikey","dbname","apikey='".$apikey."' and state=1");
+	return $result;
+}
+
+
+function apiResult($str) {
+	$result=json_encode($str,JSON_UNESCAPED_UNICODE);
+	return $result;
+}
+
+function jsonPostData() {
+    if (isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
+        return $GLOBALS['HTTP_RAW_POST_DATA'];
+    } else {
+        return file_get_contents('php://input');
+    }
+}
+
+function jsonExtractId() {
+    $regex = '/[\'"]id[\'"] *: *([0-9]*)/';
+    $raw_data = jsonPostData();
+    if (preg_match($regex, $raw_data, $m)) {
+        return $m[1];
+    } else {
+        return null;
+    }
+}
+
+function jsonResponse($result,$id,$error) {
+    echo json_encode(array("jsonrpc" => "2.0",
+                             'result' => $result,
+                             'id' => $id,
+                             'error'=> $error),JSON_UNESCAPED_UNICODE);
+	exit;
+}
+
+function jsonErrorMsg() {
+    switch (json_last_error()) {
+    case JSON_ERROR_NONE:
+        return 'No error has occurred';
+    case JSON_ERROR_DEPTH:
+        return 'The maximum stack depth has been exceeded';
+    case JSON_ERROR_CTRL_CHAR:
+        return 'Control character error, possibly incorrectly encoded';
+    case JSON_ERROR_SYNTAX:
+        return 'Syntax error';
+    case JSON_ERROR_UTF8:
+        return 'Malformed UTF-8 characters, possibly incorrectly encoded';
+	default :
+		return 'Unkown json error.';
+    }
+}
+
+function jsonErrorResult($error_code) {
+	global $msg;
+    $id=jsonExtractId();
+	if($error_code==2000) {
+        $message='[Json Error] '.jsonErrorMsg();
+	} else {
+		$message=$msg[$error_code];
+	}
+
+	$error=array(
+		"code" => $error_code,
+		"message" => $message
+	);
+    return jsonResponse(null, $id, $error);
+}
+
+
+function jsonRequest() {
+    $request=jsonPostData();
+    if($request == "") {
+        jsonErrorResult(101);
+    }
+    $encoding=mb_detect_encoding($request, 'auto');
+    if ($encoding!='UTF-8') {
+        $request=iconv($encoding, 'UTF-8', $request);
+    }
+    $request=json_decode($request,true);
+    if($request == NULL) { 
+        jsonErrorResult(2000);
+    }
+    return $request;
+}
+
+
+
+
+
+
+
+
+function get_data($url) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt ($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+function get_jdata($url,$content) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER,array("Content-type: application/json"));
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+function get_pdata($url,$content) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt ($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+
+
+function get_data_header($url,$header) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ 	curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+
+function get_pdata_header($url,$header,$content) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+
+
+
+
+
+
+
+
+
+
+function postData($arr) {
+	foreach($arr as $val) {
+		$data[$val]=$_POST[$val];
+	}
+	return $data;
+}
+
+function txStrToArr($str,$arr,$delim="|") {
+	$exp=explode($delim,$str);
+	foreach($arr as $key=>$val) {
+		if(isset($exp[$key])) $data[$val]=$exp[$key];
+	}
+	return $data;
+}
+
+function checkProc($chk) {
+	return;
+	foreach($_POST as $k=>$v) {
+		$proc.="[".$k."]=>".$v."\n";
+	}
+	
+	//$proc=print_r($_POST,true);
+	$data['func']=$chk;
+	$data['proc']=$proc;
+	$data['ipcheck']=$_SERVER['REMOTE_ADDR'];
+	$data['state']=1;
+	$rs=dataInsert("site_proc_check",$data);
+}
+
+function setHash($str) {
+	$result=hash("sha256",$str);
+	return $result;
+}
+
+
+
+function fileLog($filepath,$contents) {
+	$fp=fopen($filepath,"w");
+	fwrite($fp,$contents);
+	fclose($fp);
+}
+
+function firewallLog($key) {
+	if(strpos(FIREWALLMODE,"save")!==false) {
+		$data['id']="";
+		if(isset($_SESSION)) $data['sess']=addslashes(print_r($_SESSION,true)); else $data['sess']=""; 
+		if(isset($_COOKIE)) $data['cookie']=addslashes(print_r($_COOKIE,true)); else $data['cookie']=""; 
+		if(isset($_GET)) $data['get']=addslashes(print_r($_GET,true)); else $data['get']=""; 
+		if(isset($_SERVER)) $data['servar']=addslashes(print_r($_SERVER,true)); else $data['servar']=""; 
+		$data['block_key']=$key;
+		$data['ipcheck']='';
+		$data['state']=1;
+		$rs=dataInsert("Site_firewall",$data);
+	}
+	if(strpos(FIREWALLMODE,"exit")!==false) {
+		echo "exit";
+		exit;
+	}
+}
+
+function coinTransfer($id,$rid,$amount,$atype='api',$fee=0) {
+	global $time_stamp,$datetime,$todate,$cno;
+
+	$data['cprice']=0;
+	$data['cno']=$cno;
+	$data['ipcheck']='';
+	$data['regtime']=$datetime;
+	$data['paydate']=$todate;
+	$data['paydata']='';
+	$data['id']=$id;
+	$data['state']=1;
+	$data['atype']=$atype;
+	$data['ctype']='transfer';
+	$data['gtype']='out';
+	$data['symbol']='QMT';
+	$data['inputid']=$rid;
+	$data['fee']=$amount*$fee*0.01;
+	$data['cash']=($amount+$amount*$fee*0.01)*(-1);
+	$data['apply']=$amount;
+	$data['txhash']='0x'.hash('sha256',$id.$rid.$amount.$data['cno']);
+
+	$rs1=dataInsert("Wallet",$data);
+
+	if($rs1) {
+		$data['id']=$rid;
+		$data['inputid']=$id;
+		$data['gtype']='in';
+		$data['fee']=0;
+		$data['cash']=$amount;
+		$rs2=dataInsert("Wallet",$data);
+
+		if($fee>0) {
+			$data['id']='#fee';
+			$data['inputid']=$id;
+			$data['gtype']='fee';
+			$data['cash']=$amount*$fee*0.01;
+			$data['fee']=0;
+			$data['apply']=$amount;
+			$rs3=dataInsert("Wallet",$data);
+		} else {
+			$rs3=1;
+		}
+	} 
+
+	if($rs1 && $rs2 && $rs3) {
+		return 1;
+	} else {
+		return 0;
+	}
+
+}
+
+
+function nftSwitchField($field,$val,$direct='') {
+	if(is_numeric($val)) {
+		return $val;
+	} else {
+		if($direct=='create') {
+			if($field=="tradeStatus") {
+				if(strtolower($val)==true) return 1; else return 0;
+			}
+
+		} else {
+			if($field=="tradeStatus") {
+				if($val==1) return true; else return false;
+			}
+		}
+	}
+}
+
+
+?>

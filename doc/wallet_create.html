@@ -1,0 +1,139 @@
+<div class="nk-content ">
+	<div class="container-fluid">
+		<div class="nk-content-inner">
+			<div class="nk-content-body">
+				<div class="components-preview wide-md mx-auto">
+					<div class="nk-block-head nk-block-head-lg wide-sm">
+						<div class="nk-block-head-content">
+							<h2 class="nk-block-title fw-normal">지갑 생성</h2>
+							<div class="nk-block-des">
+								<p class="lead">
+									지갑을 생성하고 지갑정보를 받습니다.<br>
+									계정과 지갑을 동시에 생성할 수도 있습니다.<br>
+								</p>
+							</div>
+						</div>
+					</div><!-- .nk-block-head -->
+					<div class="nk-block nk-block-lg">
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">method : <span class="badge badge-sm badge-primary"><?=$pagef?></span></h4>
+								<div class="nk-block-des">
+									<p></p>
+								</div>
+							</div>
+						</div>
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">params : </span></h4>
+							</div>
+						</div>
+
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>walletId</td>
+											<td>String</td>
+											<td>생성할 지갑 계정 아이디</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>walletPw</td>
+											<td>String</td>
+											<td>생성할 지갑 패스워드</td>
+											<td></td>
+											<td>향후 패스워드 암호화 필요</td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="nk-block-head">
+							<div class="nk-block-head-content">
+								<h4 class="nk-block-title">response : result.data </span></h4>
+							</div>
+						</div>
+						<div class="card card-preview">
+							<div class="card-inner">
+								<table class="table table-striped text-center">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">변수</th>
+											<th scope="col">형식</th>
+											<th scope="col">설명</th>
+											<th scope="col">필수</th>
+											<th scope="col">비고</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>privateKey</td>
+											<td>String</td>
+											<td>생성된 지갑주소의 개인키</td>
+											<td>*</td>
+											<td></td>
+										</tr>										
+										<tr>
+											<th scope="row">2</th>
+											<td>restoreWord</td>
+											<td>Array(String)</td>
+											<td>생성된 지갑주소의 복구문자 조합</td>
+											<td>*</td>
+											<td></td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>wallet</td>
+											<td>String</td>
+											<td>생성된 지갑 주소</td>
+											<td>*</td>
+											<td></td>
+										</tr>										
+
+										<tr>
+											<th scope="row">4</th>
+											<td>account</td>
+											<td>String</td>
+											<td>계정 생성시 : create</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td colspan="6" style="padding:0"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<? include __DIR__."/_example.html";?>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

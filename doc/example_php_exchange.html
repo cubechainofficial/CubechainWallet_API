@@ -1,0 +1,44 @@
+<?
+$phpdata='
+function apiCallGet($url) {
+	$ch = curl_init();
+	$timeout = 10;
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt ($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
+
+$url="https://api.hanbitco.com";
+
+$trading_pair_name="QUBT-BTC";
+$content="?trading_pair_name=".$trading_pair_name;
+$path="/v1/ticker/".$content;
+$url.=$path;
+
+$res=apiCallGet($url);
+$result=json_decode($res);
+
+print_r($result);
+';
+
+?>
+
+
+
+			<div class="nk-block-head">
+				<div class="nk-block-head-content">
+					<h4 class="nk-block-title">PHP Code : </span></h4>
+				</div>
+			</div>
+
+			<div class="code-block">
+				<h6 class="overline-title title">&nbsp;&nbsp;</h6>
+				<button class="btn btn-sm clipboard-init" title="Copy from Request" data-clipboard-target="#extable-php" data-clip-success="Copied" data-clip-text="Copy"><span class="clipboard-text">Copy</span></button>
+				<pre class="prettyprint lang-php" id="extable-php" style="font-size:14px;min-height:550px"><?=$phpdata?></pre>
+			</div>
+
